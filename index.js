@@ -36,7 +36,7 @@ app.post('/post', (req, res) => {
 
 	//debug
 	db.selectUser("pierre", function(resQuery){
-		res.write(JSON.stringify(resQuery));
+		res.write("recu reponse");
 		res.end();
 	});
 
