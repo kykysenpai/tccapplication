@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const session = require('express-session');
+const db = require('./db/db.js');
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -12,7 +13,8 @@ app.use(bodyParser.json());
 app.use(session({
 	secret: 'TCC VAINCRA',
 	cookie:{
-		secure: true
+		secure: true,
+		maxAge: 1800000
 	}
 }));
 
@@ -31,19 +33,49 @@ app.post('/post', (req, res) => {
 	if(!action){
 		action = "none";
 	}
-	//res.send(action);
-	isLogged(req, res);
-	res.end();
+
+	//debug
+	db.selectUser("pierre", function(resQuery){
+		for(let row of resQuery.rows){
+			res.write(JSON.stringify(row));
+		}
+		res.end();
+	});
+
+
+	//switch actions user
+	switch(action){
+		case 'mainLogin':
+			login(req, res);
+			break;
+	}
+	if(!isLogged(req)){
+		return;
+	}
+	//switch actions logged in
+	switch(action){
+		case 'chargerInfo':
+			break;
+	}
+
 });
 
 app.listen(app.get('port'), function() {
-  console.log('Node app is running on port', app.get('port'));
+	console.log('Node app is running on port', app.get('port'));
 });
 
-function isLogged(req, res){
-	if(req.session){
-		res.write("session : " + JSON.stringify(req.session));
+function login(req, res){
+	if(isLogged(req)){
+		return;
+	}
+	var map = JSON.parse(req.body.map);
+
+}
+
+function isLogged(req){
+	if(req.session.user){
+		return true;
 	}else{
-		res.write("pas de session");
+		return false;
 	}
 }
