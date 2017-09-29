@@ -3,7 +3,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const session = require('express-session');
-const db = require('./www/js/db/db.js');
+const db = require('./www/js/modules/db.js');
+const pw = require('./www/js/modules/pw.js');
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -33,6 +34,17 @@ app.post('/post', (req, res) => {
 	if(!action){
 		action = "none";
 	}
+
+	pw.crypt('jean', function(err, hash){
+		if(err){
+			res.write("ko");
+		} else {
+			res.write(hash);
+		}
+		res.end();
+	});
+
+	return;
 
 	//debug
 	db.selectUser("pierre", function(err, rows){
