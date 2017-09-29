@@ -1,14 +1,12 @@
-const express = require('express'),
-app = express(),
-fs = require('fs'),
-http = require('http');
+const express = require('express');
+const app = express();
+const fs = require('fs');
 
 app.set('port', (process.env.PORT || 5000));
 
 app.use(express.static(__dirname + '/www'));
 
 app.get('/', (req, res) => {
-
 	fs.readFile('www/index.html', function (err, html) {
 		if (err) {
 			throw err;
