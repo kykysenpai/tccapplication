@@ -36,9 +36,7 @@ app.post('/post', (req, res) => {
 
 	//debug
 	db.selectUser("pierre", function(resQuery){
-		for(let row of resQuery.rows){
-			res.write(JSON.stringify(row));
-		}
+		res.write(resQuery);
 		res.end();
 	});
 
