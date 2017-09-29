@@ -35,11 +35,11 @@ app.post('/post', (req, res) => {
 	}
 
 	//debug
-	db.selectUser("pierre", function(err, resQuery){
+	db.selectUser("pierre", function(err, rows){
 		if(err){
-			res.write("ko");
+			res.write(JSON.stringify(err));
 		} else {
-			res.write("ok");
+			res.write(JSON.stringify(rows[0]));
 		}
 		res.end();
 	});
