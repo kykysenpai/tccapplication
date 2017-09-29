@@ -36,6 +36,7 @@ app.post('/post', (req, res) => {
 
 	//debug
 	db.selectUser("pierre", function(err, resQuery){
+		res.write(err);
 		if(err){
 			res.write("error");
 		} else {
