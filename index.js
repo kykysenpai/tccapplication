@@ -32,18 +32,18 @@ app.post('/post', (req, res) => {
 		action = "none";
 	}
 	//res.send(action);
-	isLogged(req, resp);
-	resp.end();
+	isLogged(req, res);
+	res.end();
 });
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
 
-function isLogged(req, resp){
+function isLogged(req, res){
 	if(req.session){
-		resp.write("session : " + JSON.stringify(req.session));
+		res.write("session : " + JSON.stringify(req.session));
 	}else{
-		resp.write("pas de session");
+		res.write("pas de session");
 	}
 }
