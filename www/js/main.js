@@ -19,10 +19,10 @@ $(function(){
     type: 'POST',
     data: {action:"action"},
     success: function(resp){
-      console.log("ok");
+      console.log(resp);
     },
     error: function(resp){
-      console.log("ko");
+      console.log(resp);
     }
   });
 
