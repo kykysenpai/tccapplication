@@ -17,8 +17,10 @@ app.get('/', (req, res) => {
 	});
 });
 
-app.get('/user/confirm', (req, res) => {
-
+app.post('/post', (req, res) => {
+	var action = req.param('action', "none");
+	res.write(action);
+	res.end();
 });
 
 app.listen(app.get('port'), function() {
