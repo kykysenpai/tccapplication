@@ -39,7 +39,7 @@ app.post('/post', (req, res) => {
 		if(err){
 			res.write("error");
 		} else {
-			res.write(JSON.stringify(resQuery));
+			res.write("ok");
 		}
 		res.end();
 	});
