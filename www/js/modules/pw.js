@@ -1,8 +1,9 @@
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const bcrypt = require('bcryptjs');
 
 exports.crypt = function(text, callback){
-  bcrypt.hash(text, saltRounds, callback(err,hash));
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(text, salt, callback(err,hash));
+  });
 };
 
 exports.compare = function(text, hash, callback){
