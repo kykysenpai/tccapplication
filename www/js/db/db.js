@@ -13,8 +13,8 @@ const select_user = "SELECT * FROM " + table_users + " u WHERE u.login = ";
 exports.selectUser = function(login, callback){
   client.query(select_user + login, (err, res) => {
     if(err){
-      callback(err);
+      callback(err, null);
     }
-    callback(res);
+    callback(null,res);
   });
 }
