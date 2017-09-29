@@ -17,6 +17,10 @@ app.get('/', (req, res) => {
 	});
 });
 
+app.get('/user/confirm', (req, res) => {
+
+});
+
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
