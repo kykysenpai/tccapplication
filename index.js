@@ -36,9 +36,11 @@ app.post('/post', (req, res) => {
 
 	//debug
 	db.selectUser("pierre", function(resQuery){
-		res.write(resQuery);
+		res.write(JSON.stringify(resQuery));
 		res.end();
 	});
+
+	return;
 
 
 	//switch actions user
