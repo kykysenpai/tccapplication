@@ -1,10 +1,13 @@
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
 const fs = require('fs');
 
 app.set('port', (process.env.PORT || 5000));
 
 app.use(express.static(__dirname + '/www'));
+app.use(bodyParser.urlencod({extended : false}));
+app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
 	fs.readFile('www/index.html', function (err, html) {
@@ -18,7 +21,10 @@ app.get('/', (req, res) => {
 });
 
 app.post('/post', (req, res) => {
-	var action = req.param('action', "none");
+	var action = req.body.action;
+	if(!action){
+		action = "none";
+	}
 	res.write(action);
 	res.end();
 });

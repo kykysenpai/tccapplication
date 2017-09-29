@@ -16,14 +16,15 @@ $(function(){
 
   $.ajax({
     url: '/post',
-    type:'POST',
-    data:{action:"action"},
-    success:function(resp){
+    type: 'POST',
+    data: {action:"action"},
+    success: function(resp){
       console.log(resp);
     },
     error: function(resp){
       console.log("err");
+      console.Log(resp);
     }
-  })
+  });
 
 });
