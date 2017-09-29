@@ -1,21 +1,20 @@
-var express = require('express');
-var app = express();
+const express = require('express'), 
+app = express(),
+fs = require('fs'),
+http = require('http');
 
 app.set('port', (process.env.PORT || 5000));
 
-
-
-/*
-app.use(express.static(__dirname + '/public'));
-
-// views is directory for all template files
-app.set('views', __dirname + '/views');
-app.set('view engine', 'ejs');
-*/
-
-
-app.get('/', function(request, response) {
-  response.render('www/index.html');
+app.get('/', (req, res) => {
+	
+	fs.readFile('www/index.html', function (err, html) {
+		if (err) {
+			throw err; 
+		}  	
+		res.writeHeader(200, {"Content-Type": "text/html"});
+		res.write(html);
+		res.end();
+	});
 });
 
 app.listen(app.get('port'), function() {
