@@ -8,14 +8,14 @@ client.connect();
 const table_users = "tccapp.users";
 const table_posts = "tccapp.posts";
 
-const select_user = "SELECT * FROM " + table_users + " u WHERE u.login = ";
+const select_user = "SELECT * FROM " + table_users + " u WHERE u.login = ($1)";
 
 exports.selectUser = function(login, callback){
-  client.query(select_user + "'" + login + "';", (err, res) => {
+  client.query(select_user,[login], (err, res) => {
     if(err){
       callback(err, null);
-    }else{
-      callback(null,res);
+    } else {
+      callback(null,res.rows);
     }
   });
 }
