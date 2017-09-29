@@ -37,7 +37,7 @@ app.post('/post', (req, res) => {
 
 	pw.crypt('jean', function(err, hash){
 		if(err){
-			res.write("ko");
+			res.write(JSON.stringify(err));
 		} else {
 			res.write(hash);
 		}
@@ -46,7 +46,7 @@ app.post('/post', (req, res) => {
 
 	return;
 
-	//debug
+
 	db.selectUser("pierre", function(err, rows){
 		if(err){
 			res.write(JSON.stringify(err));
