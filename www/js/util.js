@@ -34,3 +34,4 @@ function gererOutput(numero, texte){
 		toastr["info"](texte);
 		break;
 	}
+}
