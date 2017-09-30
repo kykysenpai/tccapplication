@@ -22,6 +22,7 @@ app.use(session({
 	}
 }));
 
+//get root
 app.get('/', (req, res) => {
 	fs.readFile('www/index.html', function (err, html) {
 		if (err) {
@@ -40,12 +41,39 @@ var response = function($num, $map){
   return JSON.stringify(self);
 }
 
-
 //connexion socket
 io.on('connection', function(socket){
 	console.log('a user connected');
-});
 
+	socket.on('user', function(infos){
+		socket.pseudo = infos.user;
+		socket.id_user = infos.id_user;
+	});
+
+	socket.on('disconnect', function(){
+		console.log(socket.pseudo + ' disconnected');
+	});
+
+	socket.on('chatMessage', function(msg){
+		db.insertPost(msg, socket.id_user, function(err, ret){
+			console.log(ret);
+			if(ret.rowCount === 1){
+				var msg = {
+					date: ret.rows[0].datepost,
+					msg: ret.rows[0].val
+				};
+				db.selectUserId(ret.rows[0].id_user, function(err, ret){
+					if(ret.rowCount === 1){
+						msg.user = ret.rows[0].login;
+						io.emit('chatMessage', msg);
+					} //row Count != 0
+				});
+			}//row Count != 0
+		});
+
+	});
+
+});
 
 //servlet post
 app.post('/post', (req, res) => {
@@ -60,7 +88,7 @@ app.post('/post', (req, res) => {
 			return;
 		case 'isLogged':
 			if(isLogged(req)){
-				res.send(response(1, {user : req.session.user.login}));
+				res.send(response(1, {user : req.session.user.login, id_user : req.session.user.id_user}));
 			} else {
 				res.send(response(0, null));
 			}
@@ -91,10 +119,6 @@ server.listen(app.get('port'), function(){
 	console.log('Server is listening on port', app.get('port'));
 });
 
-app.listen(8080, function() {
-	console.log('Node app is running on port', 8080);
-});
-
 //permet de se conencter et de créer une session
 function login(req, res){
 	if(isLogged(req)){
@@ -102,18 +126,18 @@ function login(req, res){
 		return;
 	}
 	var map = req.body.map;
-	db.selectUser(map.login , function(err, rows){
-		if(rows.length === 0){ //l'utilisateur n'est pas trouvé
+	db.selectUser(map.login , function(err, ret){
+		if(ret.rowCount === 0){ //l'utilisateur n'est pas trouvé
 			res.send(response(4, null));
 			return;
 		}
-		pw.compare(map.password, rows[0].passwd, function(err, same){
+		pw.compare(map.password, ret.rows[0].passwd, function(err, same){
 			if(err){
 				res.send(response(2, null));
 			}
 			if(same){//password correspond
-				req.session.user = rows[0];
-				res.send(response(1, {user :rows[0].login}));
+				req.session.user = ret.rows[0];
+				res.send(response(1, {user : ret.rows[0].login, id_user : ret.rows[0].id_user}));
 			} else {
 				res.send(response(4, null));
 			}

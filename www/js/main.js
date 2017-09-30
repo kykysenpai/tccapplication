@@ -1,9 +1,16 @@
-function chargerSession(user){
+function chargerSession(user, id_user){
   afficherLogged();
   $('#pWelcome').text("Welcome back " + user + " !");
 
+  console.log("id user : " + id_user);
   //charger socket
   socket = io();
+  socket.emit('user', {
+    user:user,
+    id_user:id_user
+  });
+
+  loadPage('chat','mainContainer');
 
   //charger Infos
   $.ajax({
@@ -58,7 +65,7 @@ $(function(){
     success: function(ret){
       var ret = JSON.parse(ret);
       if(ret.num === 1){
-        chargerSession(ret.map.user);
+        chargerSession(ret.map.user, ret.map.id_user);
       } else {
         afficherNotLogged();
       }

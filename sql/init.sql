@@ -16,8 +16,11 @@ CREATE TABLE tccapp.users(
 CREATE TABLE tccapp.posts(
 	id_post INTEGER NOT NULL DEFAULT NEXTVAL('tccapp.pk_posts') PRIMARY KEY,
 	val TEXT NOT NULL,
-	datePost TIMESTAMP NOT NULL DEFAULT NOW()
+	id_user INTEGER NOT NULL,
+	datePost TIMESTAMP NOT NULL DEFAULT NOW(),
+	CONSTRAINT user_post_fk FOREIGN KEY (id_user) REFERENCES tccapp.users (id_user)
 );
 
 
 INSERT INTO tccapp.users VALUES (DEFAULT, NULL, NULL, 'KykySenpai', '$2a$10$7GhqeawTbD8XsV.ZvAvB8uKFUtS5NEkDhxyzVUaVxEbTHIWi0egx.', NULL); -- pwd = TCC --
+INSERT INTO tccapp.users VALUES (DEFAULT, NULL, NULL, 'Locky', '$2a$10$7GhqeawTbD8XsV.ZvAvB8uKFUtS5NEkDhxyzVUaVxEbTHIWi0egx.', NULL);

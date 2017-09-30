@@ -11,7 +11,7 @@ function formMainSignIn(map){
       var ret = JSON.parse(ret);
       gererOutput(ret.num, 'login');
       if(ret.num === 1){
-        chargerSession(ret.map.user);
+        chargerSession(ret.map.user, ret.map.id_user);
       }
     },
     error: function(ret){
@@ -21,6 +21,7 @@ function formMainSignIn(map){
 }
 
 function formMainSignOut(){
+  socket.disconnect();
   $.ajax({
     url: '/post',
     type: 'POST',

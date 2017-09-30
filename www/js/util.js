@@ -1,6 +1,14 @@
 const views = './../views/'; //dossier ou se trouvent les fichiers html partiels
+const scripts = './../scripts/'; //dossier contenant les scripts js
 
 var socket;
+
+function loadPage(name, where){
+  $('#' + where).load(views + name + ".html");
+  $.getScript(scripts + name + ".js", function(data, textStatus, jqxhr){
+    console.log("Load of a new script returned with a status of " + textStatus);
+  });
+}
 
 function afficherLogged(){
   $('.notLogged').addClass('hidden');
