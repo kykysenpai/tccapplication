@@ -82,6 +82,7 @@ app.listen(app.get('port'), function() {
 
 function login(req, res){
 	if(isLogged(req)){
+		res.send("1");
 		return;
 	}
 	var map = JSON.parse(req.body.map);
