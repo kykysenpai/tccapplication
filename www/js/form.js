@@ -11,7 +11,7 @@ function formMainSignIn(map){
       var ret = JSON.parse(ret);
       gererOutput(ret.num, 'login');
       if(ret.num === 1){
-        chargerSession(ret.user);
+        chargerSession(ret.map.user);
       }
     },
     error: function(ret){
