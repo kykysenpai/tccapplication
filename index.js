@@ -34,44 +34,20 @@ app.post('/post', (req, res) => {
 	if(!action){
 		action = "none";
 	}
-
-	pw.crypt('jean', function(err, hash){
-		if(err){
-			res.write(JSON.stringify(err));
-		} else {
-			res.write(hash);
-		}
-		res.end();
-	});
-
-	return;
-
-
-	db.selectUser("pierre", function(err, rows){
-		if(err){
-			res.write(JSON.stringify(err));
-		} else {
-			res.write(JSON.stringify(rows[0]));
-		}
-		res.end();
-	});
-
-	return;
-
-
 	//switch actions user
 	switch(action){
-		case 'mainLogin':
+		case 'formMainSignIn':
 			login(req, res);
-			break;
+			return;
 	}
 	if(!isLogged(req)){
+		res.send("3");
 		return;
 	}
 	//switch actions logged in
 	switch(action){
 		case 'chargerInfo':
-			break;
+			return;
 	}
 
 });
@@ -85,8 +61,12 @@ function login(req, res){
 		res.send("1");
 		return;
 	}
-	var map = JSON.parse(req.body.map);
-
+	var map = req.body.map;
+	db.selectUser(map.login , function(err, rows){
+		console.log('callback');
+		res.send(response(1, rows));
+	});
+	return;
 }
 
 function isLogged(req){

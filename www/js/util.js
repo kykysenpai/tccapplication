@@ -10,6 +10,12 @@ function formToJson(name){
 		return map;
 }
 
+var response = function($num, $map){
+  var self = {};
+  self.num = $num;
+  self.map = $map;
+  return JSON.stringify(self);
+}
 
 function gererOutput(numero, texte){
 		switch (numero){
@@ -17,6 +23,8 @@ function gererOutput(numero, texte){
 			texte += " : Failure !";
     case "1":
       texte += "Success !";
+    case "3":
+      texte += "No Authorization !";
 		default :
 			texte = "Unknown Error !";
 		}
@@ -28,6 +36,7 @@ function gererOutput(numero, texte){
 		toastr["success"](texte);
 		break;
 	case "2":
+  case "3":
 		toastr["error"](texte);
 		break;
 	case "5":
