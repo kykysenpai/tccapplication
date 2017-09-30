@@ -110,6 +110,7 @@ app.post('/post', (req, res) => {
 	//switch actions logged in
 	switch(action){
 		case 'chargerSession':
+			res.send(response(1, null));
 			return;
 	}
 

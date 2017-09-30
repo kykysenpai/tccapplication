@@ -19,7 +19,7 @@ function chargerSession(user, id_user){
     data:{action:'chargerSession'},
     success: function(ret){
       var ret = JSON.parse(ret);
-      gererOutput(ret.num, "Charement Session");
+      gererOutput(ret.num, "Chargement Session");
     },
     error: function(ret){
       gererOutput(2, "Chargement Session");
