@@ -5,6 +5,8 @@ const fs = require('fs');
 const session = require('express-session');
 const db = require('./www/js/modules/db.js');
 const pw = require('./www/js/modules/pw.js');
+const server = require('http').createServer(app);
+const io = require('socket.io').listen(server);
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -13,6 +15,8 @@ app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 app.use(session({
 	secret: 'TCC VAINCRA',
+	resave: false,
+	saveUninitialized : true,
 	cookie:{
 		maxAge: 1800000
 	}
@@ -37,6 +41,13 @@ var response = function($num, $map){
 }
 
 
+//connexion socket
+io.on('connection', function(socket){
+	console.log('a user connected');
+});
+
+
+//servlet post
 app.post('/post', (req, res) => {
 	var action = req.body.action;
 	if(!action){
@@ -76,8 +87,12 @@ app.post('/post', (req, res) => {
 
 });
 
-app.listen(app.get('port'), function() {
-	console.log('Node app is running on port', app.get('port'));
+server.listen(app.get('port'), function(){
+	console.log('Server is listening on port', app.get('port'));
+});
+
+app.listen(8080, function() {
+	console.log('Node app is running on port', 8080);
 });
 
 //permet de se conencter et de créer une session

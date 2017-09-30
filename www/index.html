@@ -44,7 +44,7 @@
             </ul>
           </li>
         </ul>
-        <form name ="formMainSignIn" class="navbar-form navbar-right notLogged">
+        <form name ="formMainSignIn" class="navbar-form navbar-right hidden notLogged">
           <div class="form-group">
             <input type="text" name="login" placeholder="Login" class="form-control" required>
           </div>
@@ -53,15 +53,16 @@
           </div>
           <button id="mainSignIn" type="button" class="btn btn-success formButton">Sign in</button>
         </form>
-        <form name="formMainSignOut" class="navbar-form navbar-right logged">
+        <form name="formMainSignOut" class="navbar-form navbar-right hidden logged">
           <button id="mainSignOut" type="button" class="btn btn-danger formButton">Sign out</button>
         </form>
-        <p id="pWelcome" class="navbar-text navbar-right logged"></p>
+        <p id="pWelcome" class="navbar-text navbar-right hidden logged"></p>
       </div><!--/.nav-collapse -->
     </div>
   </nav>
 
-  <div class="container">
+
+  <div id="mainContainer" class="container">
 
 
 
@@ -70,6 +71,7 @@
   <script src= "js/jquery.min.js"></script>
   <script src= "js/bootstrap.min.js"></script>
   <script src= "js/toastr.min.js"></script>
+  <script src= "js/socket.io.js"></script>
 
   <script src= "js/util.js"></script>
   <script src= "js/main.js"></script>

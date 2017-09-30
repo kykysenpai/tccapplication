@@ -30,8 +30,7 @@ function formMainSignOut(){
     success: function(ret){
       var ret = JSON.parse(ret);
       gererOutput(ret.num, 'logout');
-      $('.logged').hide();
-      $('.notLogged').show();
+      afficherNotLogged();
     },
     error: function(ret){
       gererOutput(2, 'login');

@@ -1,15 +1,27 @@
 function chargerSession(user){
-  $('.notLogged').hide();
+  afficherLogged();
   $('#pWelcome').text("Welcome back " + user + " !");
-  $('.logged').show();
+
+  //charger socket
+  socket = io();
+
   //charger Infos
+  $.ajax({
+    url:'/post',
+    type:'POST',
+    data:{action:'chargerSession'},
+    success: function(ret){
+      var ret = JSON.parse(ret);
+      gererOutput(ret.num, "Charement Session");
+    },
+    error: function(ret){
+      gererOutput(2, "Chargement Session");
+    }
+  });
 }
 
 //on ready
 $(function(){
-
-  $('.logged').hide();
-
 
   toastr.options = {
         "closeButton": false,
@@ -47,6 +59,8 @@ $(function(){
       var ret = JSON.parse(ret);
       if(ret.num === 1){
         chargerSession(ret.map.user);
+      } else {
+        afficherNotLogged();
       }
     },
     error: function(ret){

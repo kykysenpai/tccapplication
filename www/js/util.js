@@ -1,3 +1,17 @@
+const views = './../views/'; //dossier ou se trouvent les fichiers html partiels
+
+var socket;
+
+function afficherLogged(){
+  $('.notLogged').addClass('hidden');
+  $('.logged').removeClass('hidden');
+}
+
+function afficherNotLogged(){
+  $('.logged').addClass('hidden');
+  $('.notLogged').removeClass('hidden');
+}
+
 //renvoie un object js avec les valeurs du form
 function formToJson(name){
   var map = {};
@@ -41,6 +55,7 @@ function gererOutput(numero, texte){
 	case 2:
   case 3:
 		toastr["error"](texte);
+    $('#mainContainer').load(views + 'notLoggedIn.html');
 		break;
 	case 5:
 		toastr["info"](texte);
