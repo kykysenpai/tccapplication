@@ -14,7 +14,6 @@ app.use(bodyParser.json());
 app.use(session({
 	secret: 'TCC VAINCRA',
 	cookie:{
-		secure: true,
 		maxAge: 1800000
 	}
 }));
@@ -29,6 +28,15 @@ app.get('/', (req, res) => {
 	});
 });
 
+//format des réponses pour le front end
+var response = function($num, $map){
+  var self = {};
+  self.num = $num;
+  self.map = $map;
+  return JSON.stringify(self);
+}
+
+
 app.post('/post', (req, res) => {
 	var action = req.body.action;
 	if(!action){
@@ -39,14 +47,30 @@ app.post('/post', (req, res) => {
 		case 'formMainSignIn':
 			login(req, res);
 			return;
+		case 'isLogged':
+			if(isLogged(req)){
+				res.send(response(1, {user : req.session.user.login}));
+			} else {
+				res.send(response(0, null));
+			}
+			return;
+		case 'formMainSignOut':
+			req.session.destroy(function(err){
+				if(err){
+					res.send(response(0, null));
+				} else {
+					res.send(response(1, null));
+				}
+			});
+			return;
 	}
 	if(!isLogged(req)){
-		res.send("3");
+		res.send(response(3, null));
 		return;
 	}
 	//switch actions logged in
 	switch(action){
-		case 'chargerInfo':
+		case 'chargerSession':
 			return;
 	}
 
@@ -56,6 +80,7 @@ app.listen(app.get('port'), function() {
 	console.log('Node app is running on port', app.get('port'));
 });
 
+//permet de se conencter et de créer une session
 function login(req, res){
 	if(isLogged(req)){
 		res.send("1");
@@ -63,8 +88,21 @@ function login(req, res){
 	}
 	var map = req.body.map;
 	db.selectUser(map.login , function(err, rows){
-		console.log('callback');
-		res.send(response(1, rows));
+		if(rows.length === 0){ //l'utilisateur n'est pas trouvé
+			res.send(response(4, null));
+			return;
+		}
+		pw.compare(map.password, rows[0].passwd, function(err, same){
+			if(err){
+				res.send(response(2, null));
+			}
+			if(same){//password correspond
+				req.session.user = rows[0];
+				res.send(response(1, {user :rows[0].login}));
+			} else {
+				res.send(response(4, null));
+			}
+		});
 	});
 	return;
 }

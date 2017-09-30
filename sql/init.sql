@@ -9,7 +9,7 @@ CREATE TABLE tccapp.users(
 	firstname VARCHAR(50),
 	surname VARCHAR(50),
 	login VARCHAR(50) NOT NULL,
-	passwd VARCHAR(50) NOT NULL,
+	passwd VARCHAR(100) NOT NULL,
 	email VARCHAR(70)
 );
 
@@ -18,4 +18,6 @@ CREATE TABLE tccapp.posts(
 	val TEXT NOT NULL,
 	datePost TIMESTAMP NOT NULL DEFAULT NOW()
 );
-	
+
+
+INSERT INTO tccapp.users VALUES (DEFAULT, NULL, NULL, 'KykySenpai', '$2a$10$7GhqeawTbD8XsV.ZvAvB8uKFUtS5NEkDhxyzVUaVxEbTHIWi0egx.', NULL); -- pwd = TCC --

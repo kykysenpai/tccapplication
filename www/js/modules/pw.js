@@ -10,6 +10,6 @@ exports.crypt = function(text, callback){
 
 exports.compare = function(text, hash, callback){
   bcrypt.compare(text, hash, (err, res) => {
-    callback();
+    callback(err, res);
   });
 };

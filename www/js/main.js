@@ -1,8 +1,14 @@
+function chargerSession(user){
+  $('.notLogged').hide();
+  $('#pWelcome').text("Welcome back " + user + " !");
+  $('.logged').show();
+  //charger Infos
+}
+
 //on ready
 $(function(){
 
-  $('.toHide').hide();
-  $('.admin').hide();
+  $('.logged').hide();
 
 
   toastr.options = {
@@ -31,6 +37,21 @@ $(function(){
       });
       $(this).addClass("active");
     })
+  });
+
+  $.ajax({
+    url: '/post',
+    type: 'POST',
+    data: {action: 'isLogged'},
+    success: function(ret){
+      var ret = JSON.parse(ret);
+      if(ret.num === 1){
+        chargerSession(ret.map.user);
+      }
+    },
+    error: function(ret){
+      gererOutput(2, "Status");
+    }
   });
 
 });

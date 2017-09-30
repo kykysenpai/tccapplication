@@ -10,36 +10,39 @@ function formToJson(name){
 		return map;
 }
 
-var response = function($num, $map){
-  var self = {};
-  self.num = $num;
-  self.map = $map;
-  return JSON.stringify(self);
-}
-
 function gererOutput(numero, texte){
-		switch (numero){
-		case "0":
+	switch (numero){
+		case 0:
 			texte += " : Failure !";
-    case "1":
-      texte += "Success !";
-    case "3":
-      texte += "No Authorization !";
+      break;
+    case 1:
+      texte += " : Success !";
+      break;
+    case 2:
+      texte += " : Error Server, contact Kyky !";
+      break;
+    case 3:
+      texte += " : No Authorization !";
+      break;
+    case 4:
+      texte +=" : Wrong login/password combination !";
+      break;
 		default :
 			texte = "Unknown Error !";
 		}
 	switch (numero){
-	case "0":
+	case 0:
+  case 4:
 		toastr["warning"](texte);
 		break;
-	case "1":
+	case 1:
 		toastr["success"](texte);
 		break;
-	case "2":
-  case "3":
+	case 2:
+  case 3:
 		toastr["error"](texte);
 		break;
-	case "5":
+	case 5:
 		toastr["info"](texte);
 		break;
 	}
