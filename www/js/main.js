@@ -1,8 +1,6 @@
 function chargerSession(user, id_user){
   afficherLogged();
   $('#pWelcome').text("Welcome back " + user + " !");
-
-  console.log("id user : " + id_user);
   //charger socket
   socket = io();
   socket.emit('user', {
@@ -10,7 +8,7 @@ function chargerSession(user, id_user){
     id_user:id_user
   });
 
-  loadPage('chat','mainContainer');
+  loadPage('chat','chatContainer');
 
   //charger Infos
   $.ajax({
@@ -49,14 +47,17 @@ $(function(){
   }
 
   //active nav bar
-  $('#navbar').find('li').each(function(){
+  $('.navbarClickable').each(function(){
     $(this).click(function(){
       $('#navbar').find('li').each(function(){
         $(this).removeClass("active");
       });
       $(this).addClass("active");
+      loadPage(($(this).attr('name')), 'contentContainer');
     })
   });
+
+  loadPage('home','contentContainer');
 
   $.ajax({
     url: '/post',

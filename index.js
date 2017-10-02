@@ -33,6 +33,15 @@ app.get('/', (req, res) => {
 	});
 });
 
+app.get('/user', (req,res) => {
+	if(!isLogged(req)){
+		res.send(response(3, null));
+	} else {
+		console.log(req);
+		res.send(response(1, null));
+	}
+});
+
 //format des réponses pour le front end
 var response = function($num, $map){
   var self = {};
@@ -43,7 +52,6 @@ var response = function($num, $map){
 
 //connexion socket
 io.on('connection', function(socket){
-	console.log('a user connected');
 
 	socket.on('user', function(infos){
 		socket.pseudo = infos.user;
@@ -51,12 +59,10 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('disconnect', function(){
-		console.log(socket.pseudo + ' disconnected');
 	});
 
 	socket.on('chatMessage', function(msg){
 		db.insertPost(msg, socket.id_user, function(err, ret){
-			console.log(ret);
 			if(ret.rowCount === 1){
 				var msg = {
 					date: ret.rows[0].datepost,
@@ -102,15 +108,24 @@ app.post('/post', (req, res) => {
 				}
 			});
 			return;
+		case 'loadPage':
+			loadPage(req, res);
+			return;
 	}
 	if(!isLogged(req)){
 		res.send(response(3, null));
 		return;
 	}
-	//switch actions logged in
+	//switch actions logged in mandatory
 	switch(action){
 		case 'chargerSession':
 			res.send(response(1, null));
+			return;
+		case 'loadChatUsers':
+			loadChatUsers(req, res);
+			return;
+		case 'loadChatUser':
+			loadChatUser(req,res);
 			return;
 	}
 
@@ -119,6 +134,42 @@ app.post('/post', (req, res) => {
 server.listen(app.get('port'), function(){
 	console.log('Server is listening on port', app.get('port'));
 });
+
+function loadChatUsers(req, res){
+	db.selectAllUser(function(err, ret){
+		if(err){
+			res.send(response(2, null));
+		}
+		if(ret){
+			res.send(response(1, ret.rows));
+		}
+	});
+}
+
+function loadChatUser(req, res){
+	db.selectUserId(req.body.id_user, function(err, ret){
+		if(err){
+			res.send(response(2, null));
+		}
+		if(ret){
+			if(ret.rowCount === 1){
+				for(let tuple in ret.rows[0]){
+					if(!ret.rows[0][tuple]){
+						ret.rows[0][tuple] = 'Pas donné par l\'utilisateur';
+					}
+				}
+				res.send(response(1, {
+					login:ret.rows[0].login,
+					surname:ret.rows[0].surname,
+					firstname:ret.rows[0].firstname,
+					email:ret.rows[0].email
+				}));
+			} else {
+				res.send(response(5, null));
+			}
+		}
+	});
+}
 
 //permet de se conencter et de créer une session
 function login(req, res){
@@ -144,6 +195,16 @@ function login(req, res){
 			}
 		});
 	});
+	return;
+}
+
+function loadPage(req, res){
+	if((req.body.page !== 'home' &&
+		req.body.page !== 'about' &&
+		req.body.page !=='notLoggedIn') && (!isLogged(req)) ){//request of a logged in page as a visitor
+				res.send(response(3,null));
+			}
+	res.sendFile('./www/views/' + req.body.page + '.html', {root: __dirname});
 	return;
 }
 

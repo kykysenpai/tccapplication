@@ -3,10 +3,26 @@ const scripts = './../scripts/'; //dossier contenant les scripts js
 
 var socket;
 
-function loadPage(name, where){
-  $('#' + where).load(views + name + ".html");
-  $.getScript(scripts + name + ".js", function(data, textStatus, jqxhr){
-    console.log("Load of a new script returned with a status of " + textStatus);
+function loadPage(name, where, callback){
+  $.ajax({
+    url:'/post',
+    type: 'POST',
+    data: {
+      action:'loadPage',
+      page:name
+    },
+    success: function(ret){
+      try{
+        var ret = JSON.parse(ret);
+        gererOutput(ret.num, 'page loading');
+      } catch(e){
+        $('#' + where).html(ret);
+        $.getScript(scripts + name + ".js", callback); //callback appelé quand script chargé
+      }
+    },
+    error: function(ret){
+      gererOutput(2, 'page loading');
+    }
   });
 }
 
@@ -49,6 +65,8 @@ function gererOutput(numero, texte){
     case 4:
       texte +=" : Wrong login/password combination !";
       break;
+    case 5:
+      texte +=" : Couldn't find user !";
 		default :
 			texte = "Unknown Error !";
 		}
@@ -63,7 +81,7 @@ function gererOutput(numero, texte){
 	case 2:
   case 3:
 		toastr["error"](texte);
-    $('#mainContainer').load(views + 'notLoggedIn.html');
+    loadPage('notLoggedIn','contentContainer');
 		break;
 	case 5:
 		toastr["info"](texte);
