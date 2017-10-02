@@ -1,14 +1,17 @@
 $(function(){
+
+
     $('#chatForm').submit(function(){
         socket.emit('chatMessage', $('#chatText').val());
         $('#chatText').val(''); // vide l'input
         return false; //désactive le rechargement de la page au submit
     });
+
+    var connected_users;
+
     socket.on('chatMessage', function(msg){
         $('#chatMessages').append('<li class="list-group-item">[' + msg.date + '] ' + msg.user + ': ' + msg.msg +'</li>');
     });
-
-    var connected_users;
     socket.on('current_users', function(data){
         connected_users = data
         for(var id_user in connected_users){
@@ -17,6 +20,18 @@ $(function(){
                    $(this).addClass('active');
             });
         }
+    });
+    socket.on('connected_user', function(id_user){
+        $('#chatUsers').find('a').each(function(){
+            if($(this).attr('name') == id_user)
+                $(this).addClass('active');
+        });
+    });
+    socket.on('disconnected_user', function(id_user){
+        $('#chatUsers').find('a').each(function(){
+            if($(this).attr('name') == id_user)
+                $(this).removeClass('active');
+        });
     });
 
 

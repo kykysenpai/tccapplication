@@ -49,6 +49,7 @@ io.on('connection', function(socket){
 
 		connected_users[infos.id_user] = infos.user;
 
+        io.emit('connected_user',socket.id_user);
 		io.emit('chatMessage', msg);
 	});
 
@@ -63,6 +64,7 @@ io.on('connection', function(socket){
 			user: 'server'
 		};
         delete connected_users[socket.id_user];
+        io.emit('disconnected_user',socket.id_user);
 		io.emit('chatMessage', msg);
 	});
 
