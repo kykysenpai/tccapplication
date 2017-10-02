@@ -65,6 +65,15 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('chatMessage', function(msg){
+		var msg = {
+			date: new Date(),
+			msg: msg,
+			user: socket.user
+		};
+		io.emit('chatMessage', msg);
+
+		//persistance posts db
+		/*
 		db.insertPost(msg, socket.id_user, function(err, ret){
 			if(ret.rowCount === 1){
 				var msg = {
@@ -79,6 +88,8 @@ io.on('connection', function(socket){
 				});
 			}//row Count != 0
 		});
+		*/
+		//fin persistance db
 	});
 
 });
