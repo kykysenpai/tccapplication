@@ -34,7 +34,7 @@ function formMainSignOut(){
       afficherNotLogged();
     },
     error: function(ret){
-      gererOutput(2, 'login');
+      gererOutput(2, 'logout');
     }
   });
 }

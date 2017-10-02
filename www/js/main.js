@@ -2,7 +2,6 @@ function chargerSession(user, id_user){
   afficherLogged();
   $('#pWelcome').text("Welcome back " + user + " !");
 
-  console.log("id user : " + id_user);
   //charger socket
   socket = io();
   socket.emit('user', {
@@ -10,7 +9,7 @@ function chargerSession(user, id_user){
     id_user:id_user
   });
 
-  loadPage('chat','mainContainer');
+  loadPage('chat','chatContainer');
 
   //charger Infos
   $.ajax({

@@ -11,7 +11,7 @@ const table_posts = "tccapp.posts";
 
 const select_user = "SELECT * FROM " + table_users + " u WHERE u.login = ($1)";
 const select_user_id = "SELECT * FROM " + table_users + " u WHERE u.id_user = ($1)";
-const insert_post = "INSERT INTO " + table_posts + " VALUES (DEFAULT, ($1), ($2), DEFAULT) RETURNING *";
+const insert_post = "INSERT INTO " + table_posts + " VALUES (DEFAULT, ($1), ($2), ($3)) RETURNING *";
 
 exports.selectUser = function(login, callback){
   client.query(select_user,[login], (err, res) => {
@@ -34,7 +34,7 @@ exports.selectUserId = function(id_user, callback){
 }
 
 exports.insertPost = function(texte, user, callback){
-  client.query(insert_post, [texte, user], (err, res) => {
+  client.query(insert_post, [texte, user, new Date()], (err, res) => {
     if(err){
       throw (err);
     } else {

@@ -43,20 +43,29 @@ var response = function($num, $map){
 
 //connexion socket
 io.on('connection', function(socket){
-	console.log('a user connected');
 
 	socket.on('user', function(infos){
-		socket.pseudo = infos.user;
+		socket.user = infos.user;
 		socket.id_user = infos.id_user;
+		var msg = {
+			date: new Date(),
+			msg: '<em>' + socket.user + ' just logged in </em>',
+			user: 'server'
+		};
+		io.emit('chatMessage', msg);
 	});
 
 	socket.on('disconnect', function(){
-		console.log(socket.pseudo + ' disconnected');
+		var msg = {
+			date: new Date(),
+			msg: '<em>' + socket.user + ' disconnected </em>',
+			user: 'server'
+		};
+		io.emit('chatMessage', msg);
 	});
 
 	socket.on('chatMessage', function(msg){
 		db.insertPost(msg, socket.id_user, function(err, ret){
-			console.log(ret);
 			if(ret.rowCount === 1){
 				var msg = {
 					date: ret.rows[0].datepost,
@@ -70,7 +79,6 @@ io.on('connection', function(socket){
 				});
 			}//row Count != 0
 		});
-
 	});
 
 });
@@ -123,7 +131,7 @@ server.listen(app.get('port'), function(){
 //permet de se conencter et de créer une session
 function login(req, res){
 	if(isLogged(req)){
-		res.send("1");
+		res.send(response(1, {user : req.session.user.login, id_user : req.session.user.id_user}));
 		return;
 	}
 	var map = req.body.map;
