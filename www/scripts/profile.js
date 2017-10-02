@@ -26,8 +26,22 @@ function loadChatProfile(id_user){
       });
 
       $('#pageProfile button[name=confirmer]').click(function(){
-        //modification profil
-        console.log("modif");
+        var map = formToJson($(this).closest('form').attr('name'));
+        $.ajax({
+          url:'/post',
+          type:'POST',
+          data:{
+            action: 'modifProfil',
+            data: map
+          },
+          success: function(ret){
+            var ret = JSON.parse(ret);
+            gererOutput(ret.num, 'Profile modification');
+          },
+          error: function(ret){
+            gererOutput(2, 'Profile modification');
+          }
+        });
       });
     },
     error: function(ret){
@@ -37,13 +51,13 @@ function loadChatProfile(id_user){
 }
 
 function toggleClassProfile(){
-  $('#pageProfile p').each(function(){ //cache les valeurs
+  $('#pageProfile p').each(function(){ //toggle les valeurs
     $(this).toggleClass('hidden');
   });
-  $('#pageProfile input').each(function(){ //affiche les inputs
+  $('#pageProfile input').each(function(){ //toggle les inputs
     $(this).toggleClass('hidden');
   });
-  $('#pageProfile button').each(function(){
+  $('#pageProfile button').each(function(){ //toggle les buttons
     $(this).toggleClass('hidden');
   });
 }

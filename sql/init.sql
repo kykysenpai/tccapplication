@@ -28,3 +28,4 @@ INSERT INTO tccapp.users VALUES (DEFAULT, NULL, NULL, 'Yippee', '$2a$10$7GhqeawT
 INSERT INTO tccapp.users VALUES (DEFAULT, NULL, NULL, 'Terreur', '$2a$10$7GhqeawTbD8XsV.ZvAvB8uKFUtS5NEkDhxyzVUaVxEbTHIWi0egx.', NULL);
 INSERT INTO tccapp.users VALUES (DEFAULT, NULL, NULL, 'Bicky', '$2a$10$7GhqeawTbD8XsV.ZvAvB8uKFUtS5NEkDhxyzVUaVxEbTHIWi0egx.', NULL);
 INSERT INTO tccapp.users VALUES (DEFAULT, NULL, NULL, 'Sardox', '$2a$10$7GhqeawTbD8XsV.ZvAvB8uKFUtS5NEkDhxyzVUaVxEbTHIWi0egx.', NULL);
+INSERT INTO tccapp.users VALUES (DEFAULT, NULL, NULL, 'Marbeille', '$2a$10$7GhqeawTbD8XsV.ZvAvB8uKFUtS5NEkDhxyzVUaVxEbTHIWi0egx.', NULL);
