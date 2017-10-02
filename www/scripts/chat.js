@@ -4,9 +4,11 @@ $(function(){
     $('#chatText').val(''); // vide l'input
     return false; //désactive le rechargement de la page au submit
   });
+  
   socket.on('chatMessage', function(msg){
     $('#chatMessages').append('<li class="list-group-item">[' + msg.date + '] ' + msg.user + ': ' + msg.msg +'</li>');
   });
+
   $.ajax({
     url: '/post',
     type: 'POST',
