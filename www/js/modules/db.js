@@ -9,6 +9,7 @@ client.connect();
 const table_users = "tccapp.users";
 const table_posts = "tccapp.posts";
 
+const select_all_user = "SELECT u.id_user, u.login FROM " + table_users + " u";
 const select_user = "SELECT * FROM " + table_users + " u WHERE u.login = ($1)";
 const select_user_id = "SELECT * FROM " + table_users + " u WHERE u.id_user = ($1)";
 const insert_post = "INSERT INTO " + table_posts + " VALUES (DEFAULT, ($1), ($2), ($3)) RETURNING *";
@@ -19,6 +20,16 @@ exports.selectUser = function(login, callback){
       throw(err);
     } else {
       callback(null,res);
+    }
+  });
+}
+
+exports.selectAllUser = function(callback){
+  client.query(select_all_user, (err, res) =>{
+    if(err){
+      throw(err);
+    } else {
+      callback(null, res);
     }
   });
 }

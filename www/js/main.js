@@ -1,6 +1,12 @@
 function chargerSession(user, id_user){
   afficherLogged();
-  $('#pWelcome').text("Welcome back " + user + " !");
+  $('#pWelcome').html('Welcome back ' + user + ' ! (<a id="navEditProfileButton" name="' + id_user + '"><em>Edit Profile</em></a>)');
+  $('#navEditProfileButton').click(function(){
+    var id_user = $(this).attr('name');
+    loadPage('profile','contentContainer',function(){
+      loadChatProfile(id_user);
+    });
+  });
 
   //charger socket
   socket = io();
@@ -48,14 +54,17 @@ $(function(){
   }
 
   //active nav bar
-  $('#navbar').find('li').each(function(){
+  $('.navbarClickable').each(function(){
     $(this).click(function(){
       $('#navbar').find('li').each(function(){
         $(this).removeClass("active");
       });
       $(this).addClass("active");
+      loadPage(($(this).attr('name')), 'contentContainer');
     })
   });
+
+  loadPage('home','contentContainer');
 
   $.ajax({
     url: '/post',
