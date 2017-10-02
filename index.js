@@ -34,9 +34,11 @@ app.get('/', (req, res) => {
 	});
 });
 
+var connected_users = {};
+console.log(0);
+
 //connexion socket et gestion des IO des sockets
 io.on('connection', function(socket){
-
 	socket.on('user', function(infos){
 		socket.user = infos.user;
 		socket.id_user = infos.id_user;
@@ -45,8 +47,18 @@ io.on('connection', function(socket){
 			msg: '<em>' + socket.user + ' just logged in </em>',
 			user: 'server'
 		};
+        console.log(1);
+
+		connected_users[infos.id_user] = infos.user;
+
 		io.emit('chatMessage', msg);
 	});
+
+    socket.on('current_users', function(){
+        console.log(2);
+
+        socket.emit('current_users', connected_users);
+    });
 
 	socket.on('disconnect', function(){
 		var msg = {

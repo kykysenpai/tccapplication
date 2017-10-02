@@ -7,6 +7,11 @@ $(function(){
     socket.on('chatMessage', function(msg){
         $('#chatMessages').append('<li class="list-group-item">[' + msg.date + '] ' + msg.user + ': ' + msg.msg +'</li>');
     });
+    console.log('hello');
+    socket.emit('current_users', null);
+    socket.on('current_users', function(data){
+        console.log(data);
+    });
 
     $.ajax({
         url: '/post',
