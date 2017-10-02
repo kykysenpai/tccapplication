@@ -8,11 +8,12 @@ const pw = require('./www/js/modules/pw.js');
 const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
 
+//setup application
 app.set('port', (process.env.PORT || 5000));
-
 app.use(express.static(__dirname + '/www'));
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
+//setup cookie session
 app.use(session({
 	secret: 'TCC VAINCRA',
 	resave: false,
@@ -33,15 +34,7 @@ app.get('/', (req, res) => {
 	});
 });
 
-//format des réponses pour le front end
-var response = function($num, $map){
-  var self = {};
-  self.num = $num;
-  self.map = $map;
-  return JSON.stringify(self);
-}
-
-//connexion socket
+//connexion socket et gestion des IO des sockets
 io.on('connection', function(socket){
 
 	socket.on('user', function(infos){
@@ -94,7 +87,7 @@ io.on('connection', function(socket){
 
 });
 
-//servlet post
+//servlet post switch case action
 app.post('/post', (req, res) => {
 	var action = req.body.action;
 	if(!action){
@@ -140,6 +133,9 @@ app.post('/post', (req, res) => {
 		case 'loadChatUser':
 			loadChatUser(req,res);
 			return;
+		case 'modifProfil':
+			modifProfil(req,res);
+			return;
 	}
 
 });
@@ -148,6 +144,40 @@ server.listen(app.get('port'), function(){
 	console.log('Server is listening on port', app.get('port'));
 });
 
+//format des réponses pour le front end
+var response = function(num, map){
+  var self = {};
+  self.num = num;
+  self.map = map;
+  return JSON.stringify(self);
+}
+
+//modifie le profil en db
+function modifProfil(req,res){
+	if(req.body.data.password !== req.body.data.confirmPassword){ //le pwd de confirmation ne coincide pas
+		res.send(response(6,null));
+		return;
+	}
+	for(var data in req.body.data){//enleve les string encombrants
+		if(req.body.data[data] === 'Pas donné par l\'utilisateur'){
+			req.body.data[data] = null;
+		}
+	}
+	req.body.data.id_user = req.session.user.id_user;
+	pw.crypt(req.body.data.password, function(err, hash){
+		if(err){
+			res.send(response(2, null));
+		} else {
+			req.body.data.password = hash;
+			db.updateUser(req.body.data, function(err, ret){
+				res.send(response(1, null));
+				return;
+			});
+		}
+	});
+}
+
+//renvoie l'ensemble des id_user et pseudo au front end
 function loadChatUsers(req, res){
 	db.selectAllUser(function(err, ret){
 		if(err){
@@ -159,6 +189,7 @@ function loadChatUsers(req, res){
 	});
 }
 
+//renvoie les infos d'un utilisateur au front end
 function loadChatUser(req, res){
 	db.selectUserId(req.body.id_user, function(err, ret){
 		if(err){
@@ -211,6 +242,7 @@ function login(req, res){
 	return;
 }
 
+//permet de charger une page demandée
 function loadPage(req, res){
 	if((req.body.page !== 'home' &&
 		req.body.page !== 'about' &&
@@ -218,10 +250,11 @@ function loadPage(req, res){
 				res.send(response(3,null));
 				return;
 			}
-	res.sendFile('./www/views/' + req.body.page + '.html', {root: __dirname});
+	res.sendFile('www/views/' + req.body.page + '.html', {root: __dirname});
 	return;
 }
 
+//vérifie s'il existe une session grâce a la requete client
 function isLogged(req){
 	if(req.session.user){
 		return true;

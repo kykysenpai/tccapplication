@@ -43,9 +43,6 @@ $(function(){
     $('.formButton').click(function(){
       var formName = $(this).closest('form').attr('name');
       var map = formToJson(formName);
-
-      console.log(map);
-
       switch(formName){
         case 'formMainSignIn':
           formMainSignIn(map);

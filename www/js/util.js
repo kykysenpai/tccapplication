@@ -67,12 +67,17 @@ function gererOutput(numero, texte){
       break;
     case 5:
       texte +=" : Couldn't find user !";
+      break;
+    case 6:
+      texte +=" : Passwords didn't match !";
+      break;
 		default :
 			texte = "Unknown Error !";
 		}
 	switch (numero){
 	case 0:
   case 4:
+  case 6:
 		toastr["warning"](texte);
 		break;
 	case 1:
