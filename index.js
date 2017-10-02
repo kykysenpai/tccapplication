@@ -33,15 +33,6 @@ app.get('/', (req, res) => {
 	});
 });
 
-app.get('/user', (req,res) => {
-	if(!isLogged(req)){
-		res.send(response(3, null));
-	} else {
-		console.log(req);
-		res.send(response(1, null));
-	}
-});
-
 //format des réponses pour le front end
 var response = function($num, $map){
   var self = {};
@@ -203,6 +194,7 @@ function loadPage(req, res){
 		req.body.page !== 'about' &&
 		req.body.page !=='notLoggedIn') && (!isLogged(req)) ){//request of a logged in page as a visitor
 				res.send(response(3,null));
+				return;
 			}
 	res.sendFile('./www/views/' + req.body.page + '.html', {root: __dirname});
 	return;

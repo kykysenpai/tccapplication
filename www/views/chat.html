@@ -1,8 +1,13 @@
 <!DOCTYPE HTML>
-<ul id="chatMessages"></ul>
-  <form action="" id="chatForm" name="chatForm">
-      <input id="chatText" type="text" name="message" placeholder="Your message..." required>
-      <button id="chatButton" type="submit" class="btn btn-info">Send</button>
+<div class="container-fluid pre-scrollable">
+<ul class="list-group" id="chatMessages"></ul>
+  <form class="form-group" action="" id="chatForm" name="chatForm">
+      <input id="chatText" type="text" name="message" placeholder="Your message..." class="form-control" required>
+      <button id="chatButton" type="submit" class="btn btn-info form-group">Send</button>
   </form>
-  <ul id="chatUsers"></ul>
+</div>
+<br/>
+<div class="container-fluid">
+  <ul id="chatUsers" class="list-group"></ul>
+</div>
 </html>

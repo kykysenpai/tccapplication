@@ -1,6 +1,13 @@
 function chargerSession(user, id_user){
   afficherLogged();
-  $('#pWelcome').text("Welcome back " + user + " !");
+  $('#pWelcome').html('Welcome back ' + user + ' ! (<a id="navEditProfileButton" name="' + id_user + '"><em>Edit Profile</em></a>)');
+  $('#navEditProfileButton').click(function(){
+    var id_user = $(this).attr('name');
+    loadPage('profile','contentContainer',function(){
+      loadChatProfile(id_user);
+    });
+  });
+
   //charger socket
   socket = io();
   socket.emit('user', {
