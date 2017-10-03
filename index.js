@@ -1,7 +1,7 @@
 const opbeat = require('opbeat').start({
-	appId: '03f16dd917',
-	organizationId: 'aa8f1982165e47fab2e25bf3bf89c0fc',
-	secretToken: '647d9584e37bd7157e22978d6bf1a5dd0c000040'
+	appId: 'e7f9b84da2',
+	organizationId: '3b323ca34077436a8e5d636c7ec38413',
+	secretToken: 'ef58eecb811d5a477ec869bf4fe11f2718037355'
 }); //app externe de debugging
 const express = require('express');
 const app = express();
