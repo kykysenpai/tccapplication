@@ -23,7 +23,7 @@ exports.updateUser = function(data, callback){
       callback(null, res);
     }
   });
-}
+};
 
 exports.selectUser = function(login, callback){
   client.query(select_user,[login], (err, res) => {
@@ -33,7 +33,7 @@ exports.selectUser = function(login, callback){
       callback(null,res);
     }
   });
-}
+};
 
 exports.selectAllUser = function(callback){
   client.query(select_all_user, (err, res) =>{
@@ -43,7 +43,7 @@ exports.selectAllUser = function(callback){
       callback(null, res);
     }
   });
-}
+};
 
 exports.selectUserId = function(id_user, callback){
     client.query(select_user_id,[id_user], (err,res) =>{
@@ -63,4 +63,4 @@ exports.insertPost = function(texte, user, callback){
       callback(null, res);
     }
   });
-}
+};
