@@ -34,10 +34,12 @@ app.get('/', (req, res) => {
 	});
 });
 
-var connected_users = {};
+var connected_users = {}; //les utilisateurs connectés maintenant
 
 //connexion socket et gestion des IO des sockets
-io.on('connection', function(socket){
+io.on('connection', function(socket){ //connexion d'un socket
+
+	//Un socket envoie ses infos d'utilisateur, ajout dans le tableau des connexions
 	socket.on('user', function(infos){
 		socket.user = infos.user;
 		socket.id_user = infos.id_user;
@@ -46,17 +48,15 @@ io.on('connection', function(socket){
 			msg: '<em>' + socket.user + ' just logged in </em>',
 			user: 'server'
 		};
-
 		connected_users[infos.id_user] = infos.user;
-
-        io.emit('connected_user',socket.id_user);
-		io.emit('chatMessage', msg);
+    io.emit('connected_user',socket.id_user); //broadcast de la connexion de l'utilisateur
+		io.emit('chatMessage', msg); //broadcast connexion chat
 	});
-
+	//Un socket demande quels utilisateurs sont connectés
     socket.on('current_users', function(){
         socket.emit('current_users', connected_users);
     });
-
+		//un socket s'est déconnecté
 	socket.on('disconnect', function(){
 		var msg = {
 			date: new Date(),
@@ -67,7 +67,7 @@ io.on('connection', function(socket){
         io.emit('disconnected_user',socket.id_user);
 		io.emit('chatMessage', msg);
 	});
-
+	//un socket a envoyé un message dans le chat
 	socket.on('chatMessage', function(msg){
 		var msg = {
 			date: new Date(),
@@ -75,25 +75,6 @@ io.on('connection', function(socket){
 			user: socket.user
 		};
 		io.emit('chatMessage', msg);
-
-		//persistance posts db
-		/*
-		db.insertPost(msg, socket.id_user, function(err, ret){
-			if(ret.rowCount === 1){
-				var msg = {
-					date: ret.rows[0].datepost,
-					msg: ret.rows[0].val
-				};
-				db.selectUserId(ret.rows[0].id_user, function(err, ret){
-					if(ret.rowCount === 1){
-						msg.user = ret.rows[0].login;
-						io.emit('chatMessage', msg);
-					} //row Count != 0
-				});
-			}//row Count != 0
-		});
-		*/
-		//fin persistance db
 	});
 
 });
@@ -106,17 +87,17 @@ app.post('/post', (req, res) => {
 	}
 	//switch actions user
 	switch(action){
-		case 'formMainSignIn':
+		case 'formMainSignIn'://login d'un utilisateur
 			login(req, res);
 			return;
-		case 'isLogged':
+		case 'isLogged'://une session demande si l'utilisateur est déja connecté
 			if(isLogged(req)){
 				res.send(response(1, {user : req.session.user.login, id_user : req.session.user.id_user}));
 			} else {
 				res.send(response(0, null));
 			}
 			return;
-		case 'formMainSignOut':
+		case 'formMainSignOut'://une session se déconnecte
 			req.session.destroy(function(err){
 				if(err){
 					res.send(response(0, null));
@@ -125,7 +106,7 @@ app.post('/post', (req, res) => {
 				}
 			});
 			return;
-		case 'loadPage':
+		case 'loadPage': //une session demande une page
 			loadPage(req, res);
 			return;
 	}
@@ -135,16 +116,16 @@ app.post('/post', (req, res) => {
 	}
 	//switch actions logged in mandatory
 	switch(action){
-		case 'chargerSession':
+		case 'chargerSession': //chargement des infos d'un utilisateur
 			res.send(response(1, null));
 			return;
-		case 'loadChatUsers':
+		case 'loadChatUsers': //chargement des utilisateurs dans le chat
 			loadChatUsers(req, res);
 			return;
-		case 'loadChatUser':
+		case 'loadChatUser': //chargement infos d'un utilisateur (profil)
 			loadChatUser(req,res);
 			return;
-		case 'modifProfil':
+		case 'modifProfil': //demande de mofif du profil
 			modifProfil(req,res);
 			return;
 	}
