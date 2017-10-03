@@ -1,26 +1,24 @@
 const opbeat = require('opbeat').start({
 	appId: '03f16dd917',
 	organizationId: 'aa8f1982165e47fab2e25bf3bf89c0fc',
-	secreToken: '647d9584e37bd7157e22978d6bf1a5dd0c000040'
+	secretToken: '647d9584e37bd7157e22978d6bf1a5dd0c000040'
 }); //app externe de debugging
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const session = require('express-session');
-const db = require('./www/js/modules/db.js');
-const pw = require('./www/js/modules/pw.js');
+const db = require('./modules/db.js');
+const pw = require('./modules/pw.js');
 const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
 
 //setup application
 app.set('port', (process.env.PORT || 5000));
-app.use(express.static(__dirname + '/www'));
+app.use(express.static(__dirname + '/www')); //dossier public
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
-app.use(opbeat.middleware.express()); //setup debug externe
-//setup cookie session
-app.use(session({
+app.use(session({ //setup cookie session
 	secret: 'TCC VAINCRA',
 	resave: false,
 	saveUninitialized : true,
@@ -28,6 +26,7 @@ app.use(session({
 		maxAge: 1800000
 	}
 }));
+app.use(opbeat.middleware.express()); //setup debug externe
 
 //get root
 app.get('/', (req, res) => {
