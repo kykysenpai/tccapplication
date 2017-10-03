@@ -1,3 +1,4 @@
+const opbeat = require('opbeat').start(); //app externe de debugging
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -13,6 +14,7 @@ app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/www'));
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
+app.use(opbeat.middleware.expres()); //setup debug externe
 //setup cookie session
 app.use(session({
 	secret: 'TCC VAINCRA',
