@@ -1,4 +1,8 @@
-const opbeat = require('opbeat').start(); //app externe de debugging
+const opbeat = require('opbeat').start({
+	appId: '03f16dd917',
+	organizationId: 'aa8f1982165e47fab2e25bf3bf89c0fc',
+	secreToken: '647d9584e37bd7157e22978d6bf1a5dd0c000040'
+}); //app externe de debugging
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -14,7 +18,7 @@ app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/www'));
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
-app.use(opbeat.middleware.expres()); //setup debug externe
+app.use(opbeat.middleware.express()); //setup debug externe
 //setup cookie session
 app.use(session({
 	secret: 'TCC VAINCRA',
@@ -133,6 +137,7 @@ app.post('/post', (req, res) => {
 	}
 
 });
+
 
 server.listen(app.get('port'), function(){
 	console.log('Server is listening on port', app.get('port'));
