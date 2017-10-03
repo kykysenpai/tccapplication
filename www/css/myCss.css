@@ -7,15 +7,38 @@ h1,h2,h3,h4,h5,h6{font-family: 'Lato', sans-serif;}
 /* fonctionalities-list */
 #fonctionalities-list{position: relative;list-style: none;padding: 0;margin: 0;}
 #fonctionalities-list:after{clear:both;display:block;content:'\0020';}
-#fonctionalities-list li{width: 24%; padding: 10px; margin: .5%; min-height: 50px; float: left; text-align: center;line-height: 50px;font-weight: 600;font-family: 'Lato', sans-serif;}
+#fonctionalities-list li{width: 24%; padding: 10px; margin: .5%; min-height: 50px; float: left; text-align: center;line-height: 100%;font-weight: 600;font-family: 'Lato', sans-serif;}
 #fonctionalities-list li.activated{border: 1px solid deepskyblue;transition-duration:.3s;-webkit-transition-duration: .3s;-moz-transition-duration: .3s;}
 #fonctionalities-list li.activated:hover{background-color: deepskyblue;color:#fff;transition-duration:.3s;-webkit-transition-duration: .3s;-moz-transition-duration: .3s;}
 #fonctionalities-list li.desactivated{border: 1px solid grey;}
 #fonctionalities-list li.desactivated:hover{background-color: grey;color:darkgray;transition-duration:.3s;-webkit-transition-duration: .3s;-moz-transition-duration: .3s;}
+/* -- tablette */
+@media only screen and (max-width: 1099px){
+    #fonctionalities-list li{width: 32.25%;}
+}
+/* -- mobile wide + landscape */
+@media only screen and (max-width:979px){
+    #fonctionalities-list li{width: 49%;}
+}
+/* -- mobile */
+@media only screen and (max-width:479px){
+    #fonctionalities-list li{width: 99%;}
+}
 
 /* list-devs */
 #list-devs{position: relative;list-style: none;padding: 0;margin: 0;}
 #list-devs:after{clear:both;display:block;content:'\0020';}
-#list-devs li{width: 24%; padding: 10px; margin: .5%; min-height: 50px; float: left; text-align: center;line-height: 50px;font-weight: 600;font-family: 'Lato', sans-serif;border: 1px solid green;transition-duration:.3s;-webkit-transition-duration: .3s;-moz-transition-duration: .3s;}
+#list-devs li{width: 24%; padding: 10px; margin: .5%; min-height: 50px; float: left; text-align: center;line-height: 100%;font-weight: 600;font-family: 'Lato', sans-serif;border: 1px solid green;transition-duration:.3s;-webkit-transition-duration: .3s;-moz-transition-duration: .3s;}
 #list-devs li:hover{background-color: green;color:#fff;transition-duration:.3s;-webkit-transition-duration: .3s;-moz-transition-duration: .3s;}
-
+/* -- tablette */
+@media only screen and (max-width: 1099px){
+    #list-devs li{width: 32.25%;}
+}
+/* -- mobile wide + landscape */
+@media only screen and (max-width:979px){
+    #list-devs li{width: 49%;}
+}
+/* -- mobile */
+@media only screen and (max-width:479px){
+    #list-devs li{width: 99%;}
+}
