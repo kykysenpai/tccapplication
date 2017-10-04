@@ -84,7 +84,8 @@ io.on('connection', function(socket){ //connexion d'un socket
 	});
 
 	socket.on('lancerJeu1',function(){
-		pictio.start();
+		console.log("Jeu lancé");
+		pictio.start(socket, io);
 	});
 
 });
