@@ -12,6 +12,7 @@ const db = require('./modules/db.js');
 const pw = require('./modules/pw.js');
 const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
+const pictio = require('./modules/pictio.js');
 
 //setup application
 app.set('port', (process.env.PORT || 5000));
@@ -80,6 +81,10 @@ io.on('connection', function(socket){ //connexion d'un socket
 			user: socket.user
 		};
 		io.emit('chatMessage', msg);
+	});
+
+	socket.on('lancerJeu1',function(){
+		pictio.start();
 	});
 
 });
