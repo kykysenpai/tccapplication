@@ -24,7 +24,7 @@ app.use(session({ //setup cookie session
 	resave: false,
 	saveUninitialized : true,
 	cookie:{
-		maxAge: 1800000
+		maxAge:36000000 //age
 	}
 }));
 app.use(opbeat.middleware.express()); //setup debug externe
