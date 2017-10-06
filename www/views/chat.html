@@ -1,10 +1,13 @@
-<div class="container-fluid pre-scrollable">
-  <ul class="list-group" id="chatMessages"></ul>
+<div class="container-fluid">
+  <div id="scrollableChat" class="container-fluid pre-scrollable">
+    <ul class="list-group" id="chatMessages"></ul>
+  </div>
   <hr>
   <form class="form-group" action="" id="chatForm" name="chatForm">
     <input id="chatText" type="text" name="message" placeholder="Your message..." class="form-control" required>
     <button id="chatButton" type="submit" class="btn btn-primary btn-block spaced form-group">Send</button>
   </form>
+  <ul class="list-goup" id="isTyping"></ul>
 </div>
 <br/>
 <div class="container-fluid">

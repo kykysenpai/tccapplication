@@ -70,7 +70,8 @@ $(function() { //on ready
 
 	loadPage('home', 'contentContainer');
 	isLogged(function(data) {
-		localStorage.setItem('current_user_id', data.map.id_user);
+		sessionStorage.setItem('current_user_id', data.map.id_user);
+		sessionStorage.setItem('current_user', data.map.user);
 		chargerSession(data.map.user, data.map.id_user);
 	});
 

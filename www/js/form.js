@@ -10,7 +10,8 @@ function formMainSignIn(map) {
 			var ret = JSON.parse(ret);
 			gererOutput(ret.num, 'login');
 			if (ret.num === 1) {
-				localStorage.setItem('current_user_id', ret.map.id_user);
+				sessionStorage.setItem('current_user_id', ret.map.id_user);
+				sessionStorage.setItem('current_user', ret.map.user);
 				chargerSession(ret.map.user, ret.map.id_user);
 			}
 		},
@@ -40,16 +41,12 @@ function formMainSignOut() {
 }
 
 $(function() {
-	$('.formButton').click(function() {
-		var formName = $(this).closest('form').attr('name');
-		var map = formToJson(formName);
-		switch (formName) {
-			case 'formMainSignIn':
-				formMainSignIn(map);
-				break;
-			case 'formMainSignOut':
-				formMainSignOut();
-				break;
-		}
+	$('form[name=formMainSignIn]').submit(function() {
+		var map = formToJson('formMainSignIn');
+		formMainSignIn(map);
+		return false;
+	});
+	$('form[name=formMainSignOut] > button').click(function() {
+		formMainSignOut();
 	});
 });

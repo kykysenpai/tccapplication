@@ -1,9 +1,8 @@
 var bhGame;
-const INTERVAL = 500;
+const INTERVAL = 3000; //3 sec
 
-console.log("current id : " + localStorage.getItem('current_user_id'));
 socket.emit('bhJoinGame', {
-	id: localStorage.getItem('current_user_id'),
+	id: sessionStorage.getItem('current_user_id'),
 	name: "jean"
 });
 
@@ -16,6 +15,11 @@ function GameBoxhead() {
 	this.players = []; //tous sauf local, local initialisé dans addPlayer
 	this.width = 800;
 	this.height = 800;
+	$('div[name=boxhead]').css({
+		width: 400,
+		height: 400,
+		backgroundColor: "#F0FFFF"
+	});
 
 	var t = this;
 
@@ -54,9 +58,8 @@ function Player(data) {
 
 Player.prototype = {
 	setControls: function() {
-		$('div[name=boxhead]').keypress(function(e) {
+		$(document).keypress(function(e) {
 			var k = e.keyCode || e.which;
-			console.log(k);
-		})
+		});
 	}
 }
