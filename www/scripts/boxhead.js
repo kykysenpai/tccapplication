@@ -17,8 +17,10 @@ function GameBoxhead() {
 	this.width = 800;
 	this.height = 800;
 
+	var t = this;
+
 	setInterval(function() { //appelle la fonction toutes les "INTERVAL" millisecondes
-		this.mainLoop();
+		t.mainLoop();
 	}, INTERVAL);
 }
 
