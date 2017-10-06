@@ -12,10 +12,10 @@
 
   <title>L'application des TCC</title>
 
-  <link href= "css/bootstrap.min.css" rel="stylesheet">
-  <link href= "css/cyborg.css" rel="stylesheet">
-  <link href= "css/myCss.css" rel="stylesheet">
-  <link href= "css/toastr.min.css" rel="stylesheet">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/cyborg.css" rel="stylesheet">
+  <link href="css/myCss.css" rel="stylesheet">
+  <link href="css/toastr.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -39,12 +39,11 @@
             <ul class="dropdown-menu">
               <li><a href="#" class="navbarClickable" name="bdoh">Black Desert Online Helper</a></li>
               <li><a href="#" class="navbarClickable" name="pictio">Let's Draw BOIIIIZZZZ</a></li>
-              <li><a href="#" class="navbarClickable" name="app2">Application 1</a></li>
-              <li><a href="#" class="navbarClickable" name="app3">Application 2</a></li>
+              <li><a href="#" class="navbarClickable" name="boxhead">Boxhead</a></li>
             </ul>
           </li>
         </ul>
-        <form name ="formMainSignIn" class="navbar-form navbar-right hidden notLogged">
+        <form name="formMainSignIn" class="navbar-form navbar-right hidden notLogged">
           <div class="form-group">
             <input type="text" name="login" placeholder="Login" class="form-control" required>
           </div>
@@ -57,26 +56,28 @@
           <button id="mainSignOut" type="button" class="btn btn-danger formButton">Sign out</button>
         </form>
         <p id="pWelcome" class="navbar-text navbar-right hidden logged"></p>
-      </div><!--/.nav-collapse -->
+      </div>
+      <!--/.nav-collapse -->
     </div>
   </nav>
 
 
-<div id="mainContainer" class="container-fluid">
-  <div id="contentContainer" class="container-fluid col-md-8">
+  <div id="mainContainer" class="container-fluid">
+    <div id="contentContainer" class="container-fluid col-md-8">
+    </div>
+    <div id="chatContainer" class="container-fluid col-md-4">
+    </div>
   </div>
-  <div id="chatContainer" class="container-fluid col-md-4">
-  </div>
-</div>
 
-  <script src= "js/jquery.min.js"></script>
-  <script src= "js/bootstrap.min.js"></script>
-  <script src= "js/toastr.min.js"></script>
-  <script src= "js/socket.io.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/toastr.min.js"></script>
+  <script src="js/socket.io.js"></script>
 
-  <script src= "js/util.js"></script>
-  <script src= "js/main.js"></script>
-  <script src= "js/form.js"></script>
+  <script src="js/ajax.js"></script>
+  <script src="js/util.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/form.js"></script>
 </body>
 
 </html>

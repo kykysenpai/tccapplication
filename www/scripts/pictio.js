@@ -1,10 +1,10 @@
-$(function(){
+$(function() {
 
-    console.log("salut");
-    socket.emit('lancerJeu1');
+	console.log("salut");
+	socket.emit('lancerJeu1');
 
-    socket.on('gameBegins', function(){
-        console.log("le jeu a commencé !");
-    });
+	socket.on('gameBegins', function() {
+		console.log("le jeu a commencé !");
+	});
 
 });
