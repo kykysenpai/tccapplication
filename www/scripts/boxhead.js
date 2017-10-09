@@ -15,6 +15,7 @@ function GameBoxhead() {
 	this.players = []; //tous sauf local, local initialisé dans addPlayer
 	this.width = 800;
 	this.height = 800;
+	this.arena = $('div[name=boxhead]');
 	$('div[name=boxhead]').css({
 		width: 400,
 		height: 400,
@@ -30,7 +31,7 @@ function GameBoxhead() {
 
 GameBoxhead.prototype = {
 	addPlayer: function(data) {
-		var player = new Player(data);
+		var player = new Player(data, this.arena);
 		if (player.isLocal) { //Si c'est le joueur local qui s'est connecté
 			this.localPlayer = player;
 		} else { //si c'est un autre joueur
@@ -44,16 +45,28 @@ GameBoxhead.prototype = {
 	}
 }
 
-function Player(data) {
+function Player(data, arena) {
 	this.id = data.id;
 	this.name = data.name;
 	this.isLocal = data.isLocal;
 	this.x = data.x;
 	this.y = data.y;
 	this.hp = data.hp;
-	if (this.isLocal) { //si joueur local, le nav peut le controler
-		this.setControls();
-	}
+	this.width = 100;
+	this.height = 100;
+	this.speed = 2;
+	this.rotation_speed = 5;
+	this.baseAngle = getRandomInt(0, 360);
+	this.baseAngle -= (this.baseAngle % this.rotation_speed);
+	this.dir = {
+		up: false,
+		down: false,
+		left: false,
+		right: false
+	};
+	this.arena = arena;
+
+	this.materialize();
 }
 
 Player.prototype = {
@@ -61,5 +74,49 @@ Player.prototype = {
 		$(document).keypress(function(e) {
 			var k = e.keyCode || e.which;
 		});
+	},
+	materialize: function() {
+		this.arena.append('<div id="' + this.id + '" class="player"></div>');
+		this.body = $('#' + this.id);
+		this.body.css('width', this.width);
+		this.body.css('height', this.height);
+
+		this.body.css('-webkit-transform', 'rotateZ(' + this.baseAngle + 'deg)');
+		this.body.css('-moz-transform', 'rotateZ(' + this.baseAngle + 'deg)');
+		this.body.css('-o-transform', 'rotateZ(' + this.baseAngle + 'deg)');
+		this.body.css('transform', 'rotateZ(' + this.baseAngle + 'deg)');
+
+		this.arena.append('<div id="info-' + this.id + '" class="info"></div>');
+		this.info = $('#info-' + this.id);
+		this.info.append('<div class="label">' + this.name + '</div>');
+		this.info.append('<div class="hp-bar"></div>');
+
+		this.refresh();
+
+		if (this.isLocal) {
+			this.setControls();
+		}
+	},
+	refresh: function() {
+		this.body.css('left', this.x + 'px');
+		this.body.css('top', this.y + 'px');
+
+		this.body.css('-webkit-transform', 'rotateZ(' + this.baseAngle + 'deg)');
+		this.body.css('-moz-transform', 'rotateZ(' + this.baseAngle + 'deg)');
+		this.body.css('-o-transform', 'rotateZ(' + this.baseAngle + 'deg)');
+		this.body.css('transform', 'rotateZ(' + this.baseAngle + 'deg)');
+
+		this.info.css('left', this.x + 'px');
+		this.info.css('top', this.y + 'px');
+
+		this.info.find('.hp-bar').css('width', this.hp + 'px');
+		this.info.find('.hp-bar').css('background-color', getGreenToRed(this.hp));
+
 	}
+}
+
+function getGreenToRed(percent) {
+	r = percent < 50 ? 255 : Math.floor(255 - (percent * 2 - 100) * 255 / 100);
+	g = percent > 50 ? 255 : Math.floor((percent * 2) * 255 / 100);
+	return 'rgb(' + r + ',' + g + ',0)';
 }

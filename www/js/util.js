@@ -36,6 +36,10 @@ function afficherNotLogged() {
 	$('.notLogged').removeClass('hidden');
 }
 
+function getRandomInt(min, max) {
+	return Math.floor(Math.random() * (max - min)) + min;
+}
+
 //renvoie un object js avec les valeurs du form
 function formToJson(name) {
 	var map = {};
@@ -44,6 +48,16 @@ function formToJson(name) {
 			'input[type=text],input[type=email],input[type=password],select')
 		.each(function() {
 			map[$(this).attr('name')] = $(this).val();
+		});
+	$('form[name=' + name + ']')
+		.find(
+			'input[type=checkbox]')
+		.each(function() {
+			if ($(this).is(':checked')) {
+				map[$(this).attr('name')] = true;
+			} else {
+				map[$(this).attr('name')] = null;
+			}
 		});
 	return map;
 }

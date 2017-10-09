@@ -14,6 +14,7 @@ const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
 const pictio = require('./modules/pictio.js');
 const boxheadModule = require('./modules/boxhead.js');
+const jwt = require('./modules/jwt.js');
 
 //setup application
 app.set('port', (process.env.PORT || 5000));
@@ -173,10 +174,11 @@ app.post('/post', (req, res) => {
 					user: req.session.user.login,
 					id_user: req.session.user.id_user
 				}));
+				return;
 			} else {
 				res.send(response(0, null));
+				return;
 			}
-			return;
 		case 'formMainSignOut': //une session se déconnecte
 			req.session.destroy(function(err) {
 				if (err) {
@@ -190,10 +192,12 @@ app.post('/post', (req, res) => {
 			loadPage(req, res);
 			return;
 	}
-	if (!isLogged(req)) {
-		res.send(response(3, null));
-		return;
-	}
+	isLogged(req, function(logged) {
+		if (!isLogged(req)) {
+			res.send(response(3, null));
+			return;
+		}
+	});
 	//switch actions logged in mandatory
 	switch (action) {
 		case 'chargerSession': //chargement des infos d'un utilisateur
@@ -240,6 +244,7 @@ function modifProfil(req, res) {
 	pw.crypt(req.body.data.password, function(err, hash) {
 		if (err) {
 			res.send(response(2, null));
+			return;
 		} else {
 			req.body.data.password = hash;
 			db.updateUser(req.body.data, function(err, ret) {
@@ -260,6 +265,7 @@ function loadChatUsers(req, res) {
 			res.send(response(1, ret.rows));
 		}
 	});
+	return;
 }
 
 //renvoie les infos d'un utilisateur au front end
@@ -267,6 +273,7 @@ function loadChatUser(req, res) {
 	db.selectUserId(req.body.id_user, function(err, ret) {
 		if (err) {
 			res.send(response(2, null));
+			return;
 		}
 		if (ret) {
 			if (ret.rowCount === 1) {
@@ -285,47 +292,57 @@ function loadChatUser(req, res) {
 				res.send(response(5, null));
 			}
 		}
+		return;
 	});
 }
 
 //permet de se conencter et de créer une session
 function login(req, res) {
-	if (isLogged(req)) {
+	if (isLogged(req)) { //logged in session ou jwt
 		res.send(response(1, {
 			user: req.session.user.login,
 			id_user: req.session.user.id_user
-		}));
+		})); // fin send
 		return;
-	}
-	var map = req.body.map;
-	db.selectUser(map.login, function(err, ret) {
-		if (ret.rowCount === 0) { //l'utilisateur n'est pas trouvé
-			res.send(response(4, null));
-			return;
-		}
-		pw.compare(map.password, ret.rows[0].passwd, function(err, same) {
-			if (err) {
-				res.send(response(2, null));
-			}
-			if (same) { //password correspond
-				req.session.user = ret.rows[0];
-				res.send(response(1, {
-					user: ret.rows[0].login,
-					id_user: ret.rows[0].id_user
-				}));
-			} else {
+	} else { // pas logged
+		var map = req.body.map;
+		db.selectUser(map.login, function(err, ret) {
+			if (ret.rowCount === 0) { //l'utilisateur n'est pas trouvé
 				res.send(response(4, null));
-			}
-		});
-	});
+				return;
+			} //fin row count 0
+			pw.compare(map.password, ret.rows[0].passwd, function(err, same) {
+				if (err) {
+					res.send(response(2, null));
+					return;
+				}
+				if (same) { //password correspond
+					req.session.user = {};
+					req.session.user.login = ret.rows[0]['login'];
+					req.session.user.id_user = ret.rows[0]['id_user'];
+					console.log(req.session.user);
+					var token = jwt.sign(req.session.user);
+					res.send(response(1, {
+						user: ret.rows[0].login,
+						id_user: ret.rows[0].id_user,
+						cookieAuth: req.body.map.cookieAuth ? token : null //Si rester connecté demandé jwt envoyé
+					}));
+					return;
+				} else { //fin same
+					res.send(response(4, null));
+					return;
+				}
+			}); //fin comare pw
+		}); //fin db select user
+	} //fin else pas logged
 	return;
 }
 
 //permet de charger une page demandée
 function loadPage(req, res) {
-	if ((req.body.page !== 'home' &&
+	if ((!isLogged(req)) && (req.body.page !== 'home' &&
 			req.body.page !== 'about' &&
-			req.body.page !== 'notLoggedIn') && (!isLogged(req))) { //request of a logged in page as a visitor
+			req.body.page !== 'notLoggedIn')) { //request of a logged in page as a visitor
 		res.send(response(3, null));
 		return;
 	}
@@ -333,13 +350,22 @@ function loadPage(req, res) {
 		root: __dirname
 	});
 	return;
-}
+};
 
-//vérifie s'il existe une session grâce a la requete client
+//vérifie s'il existe une session grâce a la requete client et à un jwt token
 function isLogged(req) {
 	if (req.session.user) {
 		return true;
 	} else {
-		return false;
+		if (req.body.cookieAuth) {
+			var decoded = jwt.verify(req.body.cookieAuth);
+			req.session.user = {};
+			req.session.user.login = decoded['login'];
+			req.session.user.id_user = decoded['id_user'];
+			console.log(req.session.user);
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

@@ -12,6 +12,9 @@ function formMainSignIn(map) {
 			if (ret.num === 1) {
 				sessionStorage.setItem('current_user_id', ret.map.id_user);
 				sessionStorage.setItem('current_user', ret.map.user);
+				if (ret.map.cookieAuth) {
+					localStorage.setItem('cookieAuth', ret.map.cookieAuth);
+				}
 				chargerSession(ret.map.user, ret.map.id_user);
 			}
 		},
@@ -32,6 +35,7 @@ function formMainSignOut() {
 		success: function(ret) {
 			var ret = JSON.parse(ret);
 			gererOutput(ret.num, 'logout');
+			localStorage.removeItem('cookieAuth');
 			afficherNotLogged();
 		},
 		error: function(ret) {
