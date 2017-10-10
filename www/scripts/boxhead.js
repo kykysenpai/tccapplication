@@ -1,6 +1,6 @@
 //version WebGL
 
-var renderer = PIXI.autoDetectRenderer(480,480);
+var renderer = PIXI.autoDetectRenderer(480, 480);
 
 $('div[name=boxhead]').append(renderer.view);
 

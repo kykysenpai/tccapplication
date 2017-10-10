@@ -191,8 +191,8 @@ app.post('/post', (req, res) => {
 			return;
 	}
 	if (!isLogged(req)) {
-			res.send(response(3, null));
-			return;
+		res.send(response(3, null));
+		return;
 	};
 	//switch actions logged in mandatory
 	switch (action) {
@@ -306,8 +306,7 @@ function login(req, res) {
 				if (err) {
 					res.send(response(2, null));
 					return;
-				}
-				else if (same) { //password correspond
+				} else if (same) { //password correspond
 					req.session.user = {};
 					req.session.user.login = ret.rows[0]['login'];
 					req.session.user.id_user = ret.rows[0]['id_user'];
@@ -334,11 +333,11 @@ function loadPage(req, res) {
 			req.body.page !== 'notLoggedIn')) { //request of a logged in page as a visitor
 		res.send(response(3, null));
 	} else {
-	res.sendFile('www/views/' + req.body.page + '.html', {
-		root: __dirname
-	});
-}
-return;
+		res.sendFile('www/views/' + req.body.page + '.html', {
+			root: __dirname
+		});
+	}
+	return;
 }
 
 //vérifie s'il existe une session grâce a la requete client et à un jwt token
