@@ -62,12 +62,12 @@ io.on('connection', function(socket) { //connexion d'un socket
 			hour: dateNow.getHours(),
 			minute: dateNow.getMinutes(),
 			second: dateNow.getSeconds()
-		};
+		}; // création date
 		var msg = {
 			date: dateNow,
 			msg: '<em>' + socket.user + ' just logged in </em>',
 			user: 'server'
-		};
+		}; //message à envoyer
 		connected_users[infos.id_user] = infos.user;
 		io.emit('connected_user', socket.id_user); //broadcast de la connexion de l'utilisateur
 		io.emit('chatMessage', msg); //broadcast connexion chat
@@ -118,8 +118,7 @@ io.on('connection', function(socket) { //connexion d'un socket
 	});
 
 	socket.on('lancerJeu1', function() {
-		console.log("Jeu lancé");
-		pictio.start(socket, io);
+		pictio.start(socket, io); //pictio
 	});
 
 	//listeners game box head
@@ -174,11 +173,10 @@ app.post('/post', (req, res) => {
 					user: req.session.user.login,
 					id_user: req.session.user.id_user
 				}));
-				return;
 			} else {
 				res.send(response(0, null));
-				return;
 			}
+			return;
 		case 'formMainSignOut': //une session se déconnecte
 			req.session.destroy(function(err) {
 				if (err) {
@@ -192,12 +190,10 @@ app.post('/post', (req, res) => {
 			loadPage(req, res);
 			return;
 	}
-	isLogged(req, function(logged) {
-		if (!isLogged(req)) {
+	if (!isLogged(req)) {
 			res.send(response(3, null));
 			return;
-		}
-	});
+	};
 	//switch actions logged in mandatory
 	switch (action) {
 		case 'chargerSession': //chargement des infos d'un utilisateur
@@ -235,8 +231,8 @@ function modifProfil(req, res) {
 		res.send(response(6, null));
 		return;
 	}
-	for (var data in req.body.data) { //enleve les string encombrants
-		if (req.body.data[data] === 'Pas donné par l\'utilisateur') {
+	for (var data in req.body.data) { //enleve les string encombrants pour la db, met null a la place
+		if ((req.body.data[data] === 'Pas donné par l\'utilisateur') || req.body.data[data] === '') {
 			req.body.data[data] = null;
 		}
 	}
@@ -244,14 +240,13 @@ function modifProfil(req, res) {
 	pw.crypt(req.body.data.password, function(err, hash) {
 		if (err) {
 			res.send(response(2, null));
-			return;
 		} else {
 			req.body.data.password = hash;
 			db.updateUser(req.body.data, function(err, ret) {
 				res.send(response(1, null));
-				return;
 			});
 		}
+		return;
 	});
 }
 
@@ -260,8 +255,7 @@ function loadChatUsers(req, res) {
 	db.selectAllUser(function(err, ret) {
 		if (err) {
 			res.send(response(2, null));
-		}
-		if (ret) {
+		} else {
 			res.send(response(1, ret.rows));
 		}
 	});
@@ -273,9 +267,7 @@ function loadChatUser(req, res) {
 	db.selectUserId(req.body.id_user, function(err, ret) {
 		if (err) {
 			res.send(response(2, null));
-			return;
-		}
-		if (ret) {
+		} else {
 			if (ret.rowCount === 1) {
 				for (let tuple in ret.rows[0]) {
 					if (!ret.rows[0][tuple]) {
@@ -303,7 +295,6 @@ function login(req, res) {
 			user: req.session.user.login,
 			id_user: req.session.user.id_user
 		})); // fin send
-		return;
 	} else { // pas logged
 		var map = req.body.map;
 		db.selectUser(map.login, function(err, ret) {
@@ -316,7 +307,7 @@ function login(req, res) {
 					res.send(response(2, null));
 					return;
 				}
-				if (same) { //password correspond
+				else if (same) { //password correspond
 					req.session.user = {};
 					req.session.user.login = ret.rows[0]['login'];
 					req.session.user.id_user = ret.rows[0]['id_user'];
@@ -327,10 +318,8 @@ function login(req, res) {
 						id_user: ret.rows[0].id_user,
 						cookieAuth: req.body.map.cookieAuth ? token : null //Si rester connecté demandé jwt envoyé
 					}));
-					return;
 				} else { //fin same
 					res.send(response(4, null));
-					return;
 				}
 			}); //fin comare pw
 		}); //fin db select user
@@ -344,13 +333,13 @@ function loadPage(req, res) {
 			req.body.page !== 'about' &&
 			req.body.page !== 'notLoggedIn')) { //request of a logged in page as a visitor
 		res.send(response(3, null));
-		return;
-	}
+	} else {
 	res.sendFile('www/views/' + req.body.page + '.html', {
 		root: __dirname
 	});
-	return;
-};
+}
+return;
+}
 
 //vérifie s'il existe une session grâce a la requete client et à un jwt token
 function isLogged(req) {
