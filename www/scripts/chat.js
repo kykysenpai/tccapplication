@@ -42,7 +42,6 @@ $(function() {
 	var connected_users;
 
 	socket.on('chatMessage', function(msg) {
-		console.log(msg);
 		$('#chatMessages').append('<li class="list-group-item">[' +
 			msg.date.hour + ':' +
 			msg.date.minute + ':' +

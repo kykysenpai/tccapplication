@@ -15,8 +15,6 @@ function chargerSession(user, id_user) {
 		id_user: id_user
 	});
 
-	console.log("id : " + localStorage.getItem('current_user_id'));
-
 	loadPage('chat', 'chatContainer');
 
 	//charger Infos

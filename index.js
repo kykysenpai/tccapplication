@@ -15,10 +15,12 @@ const io = require('socket.io').listen(server);
 const pictio = require('./modules/pictio.js');
 const boxheadModule = require('./modules/boxhead.js');
 const jwt = require('./modules/jwt.js');
+const serveIndex = require('serve-index');
 
 //setup application
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/www')); //dossier public
+app.use('/assets', serveIndex(__dirname + '/www/assets')); //sert le dossier assets en dossier browsable
 app.use(bodyParser.urlencoded({
 	extended: true
 }));

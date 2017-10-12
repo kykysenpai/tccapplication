@@ -8,7 +8,6 @@ function isLogged(callback) {
 		},
 		success: function(ret) {
 			var ret = JSON.parse(ret);
-			console.log(ret);
 			if (ret.num === 1) {
 				callback(ret);
 			} else {

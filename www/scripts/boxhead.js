@@ -1,135 +1,141 @@
 //version WebGL
+var Container = PIXI.Container;
+var autoDetectRenderer = PIXI.autoDetectRenderer;
+var loader = PIXI.loader;
+var resources = PIXI.loader.resources;
+var Sprite = PIXI.Sprite;
+var TextureCache = PIXI.utils.TextureCache;
 
-var renderer = PIXI.autoDetectRenderer(480, 480);
 
-$('div[name=boxhead]').append(renderer.view);
+var assets = "/assets/";
+var sprites = assets + "sprites/";
+
+var packs = [
+	'santa'
+]
+
+console.log($('html, body').css('width'));
+console.log($('html, body').css('height'));
+console.log($('html, body').css('margin'));
+$('#chatContainer').hide();
+//cache tout les éléments inutiles
+
 
 var stage = new PIXI.Container();
+var renderer = autoDetectRenderer(1280, 720);
+/* Prend toute la fenetre
 
-renderer.render(stage);
 
-
-/* probleme version HTML lags
-var bhGame;
-const INTERVAL = 3000; //3 sec
-
-socket.emit('bhJoinGame', {
-	id: sessionStorage.getItem('current_user_id'),
-	name: sessionStorage.getItem('current_users')
-});
-
-socket.on('bhJoinGame', function(player) {
-	bhGame = new GameBoxhead();
-	bhGame.addPlayer(player);
-});
-
-function GameBoxhead() {
-	this.players = []; //tous sauf local, local initialisé dans addPlayer
-	this.width = 800;
-	this.height = 800;
-	this.arena = $('div[name=boxhead]');
-	$('div[name=boxhead]').css({
-		width: 400,
-		height: 400,
-		backgroundColor: "#F0FFFF"
-	});
-
-	var t = this;
-
-	setInterval(function() { //appelle la fonction toutes les "INTERVAL" millisecondes
-		t.mainLoop();
-	}, INTERVAL);
-}
-
-GameBoxhead.prototype = {
-	addPlayer: function(data) {
-		var player = new Player(data, this.arena);
-		if (player.isLocal) { //Si c'est le joueur local qui s'est connecté
-			this.localPlayer = player;
-		} else { //si c'est un autre joueur
-			this.players.push(player);
-		}
-		console.log("connexion de :");
-		console.log(player);
-	},
-	mainLoop: function() {
-
-	}
-}
-
-function Player(data, arena) {
-	this.id = data.id;
-	this.name = data.name;
-	this.isLocal = data.isLocal;
-	this.x = data.x;
-	this.y = data.y;
-	this.hp = data.hp;
-	this.width = 100;
-	this.height = 100;
-	this.speed = 2;
-	this.rotation_speed = 5;
-	this.baseAngle = getRandomInt(0, 360);
-	this.baseAngle -= (this.baseAngle % this.rotation_speed);
-	this.dir = {
-		up: false,
-		down: false,
-		left: false,
-		right: false
-	};
-	this.arena = arena;
-
-	this.materialize();
-}
-
-Player.prototype = {
-	setControls: function() {
-		$(document).keypress(function(e) {
-			var k = e.keyCode || e.which;
-		});
-	},
-	materialize: function() {
-		this.arena.append('<div id="' + this.id + '" class="player"></div>');
-		this.body = $('#' + this.id);
-		this.body.css('width', this.width);
-		this.body.css('height', this.height);
-
-		this.body.css('-webkit-transform', 'rotateZ(' + this.baseAngle + 'deg)');
-		this.body.css('-moz-transform', 'rotateZ(' + this.baseAngle + 'deg)');
-		this.body.css('-o-transform', 'rotateZ(' + this.baseAngle + 'deg)');
-		this.body.css('transform', 'rotateZ(' + this.baseAngle + 'deg)');
-
-		this.arena.append('<div id="info-' + this.id + '" class="info"></div>');
-		this.info = $('#info-' + this.id);
-		this.info.append('<div class="label">' + this.name + '</div>');
-		this.info.append('<div class="hp-bar"></div>');
-
-		this.refresh();
-
-		if (this.isLocal) {
-			this.setControls();
-		}
-	},
-	refresh: function() {
-		this.body.css('left', this.x + 'px');
-		this.body.css('top', this.y + 'px');
-
-		this.body.css('-webkit-transform', 'rotateZ(' + this.baseAngle + 'deg)');
-		this.body.css('-moz-transform', 'rotateZ(' + this.baseAngle + 'deg)');
-		this.body.css('-o-transform', 'rotateZ(' + this.baseAngle + 'deg)');
-		this.body.css('transform', 'rotateZ(' + this.baseAngle + 'deg)');
-
-		this.info.css('left', this.x + 'px');
-		this.info.css('top', this.y + 'px');
-
-		this.info.find('.hp-bar').css('width', this.hp + 'px');
-		this.info.find('.hp-bar').css('background-color', getGreenToRed(this.hp));
-
-	}
-}
-
-function getGreenToRed(percent) {
-	r = percent < 50 ? 255 : Math.floor(255 - (percent * 2 - 100) * 255 / 100);
-	g = percent > 50 ? 255 : Math.floor((percent * 2) * 255 / 100);
-	return 'rgb(' + r + ',' + g + ',0)';
-}
+renderer.view.style.position = "absolute";
+renderer.view.style.display = "block";
+renderer.autoResize = true;
+renderer.resize(window.innerWidth, window.innerHeight);
 */
+renderer.backgroundColor = 0xffffff;
+$('div[name=boxhead]').append(renderer.view);
+
+var toLoad = [];
+var packLoaded = 0;
+
+packs.forEach(function(pack) {
+	$.ajax({
+		url: sprites + pack,
+		success: function(data) {
+			$(data).find("li > a").each(function() {
+				// will loop through
+				toLoad.push($(this).attr("href"));
+			});
+			packLoaded++;
+			$('div[name=fetchBar]').css('width', ((packLoaded / packs.length) * 100) + '%'); //pourcentage de d'infos du loaded chargées
+			if (packLoaded == packs.length) { //tout a été fetch
+				start();
+			}
+		}
+	}); //Chargement sprites
+}); //fin each
+
+function start() {
+	loader
+		.add(toLoad)
+		.on("progress", loadProgressHandler)
+		.load(setup);
+}
+
+function loadProgressHandler(loader, resource) {
+	$('div[name=loadBar]').css('width', loader.progress + '%');
+	$('div[name=loadBar] > span').text("Chargement de " + resource.url);
+}
+
+var santa;
+
+function setup() {
+	$('div[name=progressBarsDiv]').hide();
+	santa = new Sprite(resources[sprites + "santa/Dead%20(2).png"].texture);
+	santa.scale.set(0.2, 0.2);
+	santa.vx = 0;
+	santa.vy = 0;
+	santa.y = 96;
+	santa.x = 96;
+	stage.addChild(santa);
+
+	var left = keyboard(37),
+		up = keyboard(38),
+		right = keyboard(39),
+		down = keyboard(40);
+
+	left.press = function() {
+		santa.vx = -2;
+		santa.vy = 0;
+	};
+
+	left.release = function() {
+		if (!right.isDown && santa.vy === 0) {
+			santa.vx = 0;
+		}
+	};
+
+	up.press = function() {
+		santa.vy = -2;
+		santa.vx = 0;
+	};
+	up.release = function() {
+		if (!down.isDown && santa.vx === 0) {
+			santa.vy = 0;
+		}
+	};
+
+	right.press = function() {
+		santa.vx = 2;
+		santa.vy = 0;
+	};
+	right.release = function() {
+		if (!left.isDown && santa.vy === 0) {
+			santa.vx = 0;
+		}
+	};
+
+	down.press = function() {
+		santa.vy = 2;
+		santa.vx = 0;
+	};
+	down.release = function() {
+		if (!up.isDown && santa.vx === 0) {
+			santa.vy = 0;
+		}
+	};
+
+	state = play;
+	gameLoop();
+	renderer.render(stage);
+}
+
+function gameLoop() {
+	requestAnimationFrame(gameLoop);
+	state();
+	renderer.render(stage);
+}
+
+function play() {
+	santa.x += santa.vx;
+	santa.y += santa.vy;
+}
