@@ -1,9 +1,21 @@
+//version WebGL
+
+var renderer = PIXI.autoDetectRenderer(480, 480);
+
+$('div[name=boxhead]').append(renderer.view);
+
+var stage = new PIXI.Container();
+
+renderer.render(stage);
+
+
+/* probleme version HTML lags
 var bhGame;
 const INTERVAL = 3000; //3 sec
 
 socket.emit('bhJoinGame', {
 	id: sessionStorage.getItem('current_user_id'),
-	name: "jean"
+	name: sessionStorage.getItem('current_users')
 });
 
 socket.on('bhJoinGame', function(player) {
@@ -120,3 +132,4 @@ function getGreenToRed(percent) {
 	g = percent > 50 ? 255 : Math.floor((percent * 2) * 255 / 100);
 	return 'rgb(' + r + ',' + g + ',0)';
 }
+*/
