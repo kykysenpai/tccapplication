@@ -12,10 +12,15 @@ const db = require('./modules/db.js');
 const pw = require('./modules/pw.js');
 const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
+const pictio = require('./modules/pictio.js');
+const boxheadModule = require('./modules/boxhead.js');
+const jwt = require('./modules/jwt.js');
+const serveIndex = require('serve-index');
 
 //setup application
 app.set('port', (process.env.PORT || 5001));
 app.use(express.static(__dirname + '/www')); //dossier public
+app.use('/assets', serveIndex(__dirname + '/www/assets')); //sert le dossier assets en dossier browsable
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
@@ -25,7 +30,7 @@ app.use(session({ //setup cookie session
 	resave: false,
 	saveUninitialized: true,
 	cookie: {
-		maxAge: 1800000
+		maxAge: 36000000 //age
 	}
 }));
 app.use(opbeat.middleware.express()); //setup debug externe
@@ -44,6 +49,8 @@ app.get('/', (req, res) => {
 });
 
 var connected_users = {}; //les utilisateurs connectés maintenant
+var boxhead = new boxheadModule.Game();
+
 
 //connexion socket et gestion des IO des sockets
 io.on('connection', function(socket) { //connexion d'un socket
@@ -52,11 +59,17 @@ io.on('connection', function(socket) { //connexion d'un socket
 	socket.on('user', function(infos) {
 		socket.user = infos.user;
 		socket.id_user = infos.id_user;
+		var dateNow = new Date();
+		dateNow = {
+			hour: dateNow.getHours(),
+			minute: dateNow.getMinutes(),
+			second: dateNow.getSeconds()
+		}; // création date
 		var msg = {
-			date: new Date(),
+			date: dateNow,
 			msg: '<em>' + socket.user + ' just logged in </em>',
 			user: 'server'
-		};
+		}; //message à envoyer
 		connected_users[infos.id_user] = infos.user;
 		io.emit('connected_user', socket.id_user); //broadcast de la connexion de l'utilisateur
 		io.emit('chatMessage', msg); //broadcast connexion chat
@@ -67,8 +80,14 @@ io.on('connection', function(socket) { //connexion d'un socket
 	});
 	//un socket s'est déconnecté
 	socket.on('disconnect', function() {
+		var dateNow = new Date();
+		dateNow = {
+			hour: dateNow.getHours(),
+			minute: dateNow.getMinutes(),
+			second: dateNow.getSeconds()
+		};
 		var msg = {
-			date: new Date(),
+			date: dateNow,
 			msg: '<em>' + socket.user + ' disconnected </em>',
 			user: 'server'
 		};
@@ -79,11 +98,62 @@ io.on('connection', function(socket) { //connexion d'un socket
 	//un socket a envoyé un message dans le chat
 	socket.on('chatMessage', function(msg) {
 		var msg = {
-			date: new Date(),
-			msg: msg,
+			msg: msg.msg,
+			date: msg.date,
 			user: socket.user
 		};
-		io.emit('chatMessage', msg);
+		socket.broadcast.emit('chatMessage', msg);
+	});
+	socket.on('isTyping', function() {
+		var user = {
+			id_user: socket.id_user,
+			user: socket.user
+		};
+		socket.broadcast.emit('isTyping', user);
+	});
+	socket.on('stoppedTyping', function() {
+		var user = {
+			id_user: socket.id_user,
+			user: socket.user
+		};
+		socket.broadcast.emit('stoppedTyping', user);
+	});
+
+	socket.on('lancerJeu1', function() {
+		pictio.start(socket, io); //pictio
+	});
+
+	//listeners game box head
+	socket.on('bhJoinGame', function(player) { //un nouveau jouer rejoins la partie
+		var initX = 400;
+		var initY = 400;
+		var init_hp = 100;
+		socket.emit('bhJoinGame', { //réponse au socket connectant
+			id: player.id,
+			name: player.name,
+			isLocal: true,
+			x: initX,
+			y: initY,
+			hp: init_hp
+		});
+		socket.broadcast.emit('bhJoinGame', { //envoie de la connexion aux autres utilisateurs
+			id: player.id,
+			name: player.name,
+			isLocal: false,
+			x: initX,
+			y: initY,
+			hp: init_hp
+		});
+		boxhead.addPlayer({
+			id: player.id,
+			name: player.name,
+			hp: init_hp
+		});
+
+	});
+
+	socket.on('bhLeaveGame', function(player) { //un joueur quitte la partie
+		boxhead.removePlayer(player);
 	});
 
 });
@@ -125,7 +195,7 @@ app.post('/post', (req, res) => {
 	if (!isLogged(req)) {
 		res.send(response(3, null));
 		return;
-	}
+	};
 	//switch actions logged in mandatory
 	switch (action) {
 		case 'chargerSession': //chargement des infos d'un utilisateur
@@ -163,8 +233,8 @@ function modifProfil(req, res) {
 		res.send(response(6, null));
 		return;
 	}
-	for (var data in req.body.data) { //enleve les string encombrants
-		if (req.body.data[data] === 'Pas donné par l\'utilisateur') {
+	for (var data in req.body.data) { //enleve les string encombrants pour la db, met null a la place
+		if ((req.body.data[data] === 'Pas donné par l\'utilisateur') || req.body.data[data] === '') {
 			req.body.data[data] = null;
 		}
 	}
@@ -176,9 +246,9 @@ function modifProfil(req, res) {
 			req.body.data.password = hash;
 			db.updateUser(req.body.data, function(err, ret) {
 				res.send(response(1, null));
-				return;
 			});
 		}
+		return;
 	});
 }
 
@@ -187,11 +257,11 @@ function loadChatUsers(req, res) {
 	db.selectAllUser(function(err, ret) {
 		if (err) {
 			res.send(response(2, null));
-		}
-		if (ret) {
+		} else {
 			res.send(response(1, ret.rows));
 		}
 	});
+	return;
 }
 
 //renvoie les infos d'un utilisateur au front end
@@ -199,8 +269,7 @@ function loadChatUser(req, res) {
 	db.selectUserId(req.body.id_user, function(err, ret) {
 		if (err) {
 			res.send(response(2, null));
-		}
-		if (ret) {
+		} else {
 			if (ret.rowCount === 1) {
 				for (let tuple in ret.rows[0]) {
 					if (!ret.rows[0][tuple]) {
@@ -217,61 +286,76 @@ function loadChatUser(req, res) {
 				res.send(response(5, null));
 			}
 		}
+		return;
 	});
 }
 
 //permet de se conencter et de créer une session
 function login(req, res) {
-	if (isLogged(req)) {
+	if (isLogged(req)) { //logged in session ou jwt
 		res.send(response(1, {
 			user: req.session.user.login,
 			id_user: req.session.user.id_user
-		}));
-		return;
-	}
-	var map = req.body.map;
-	db.selectUser(map.login, function(err, ret) {
-		if (ret.rowCount === 0) { //l'utilisateur n'est pas trouvé
-			res.send(response(4, null));
-			return;
-		}
-		pw.compare(map.password, ret.rows[0].passwd, function(err, same) {
-			if (err) {
-				res.send(response(2, null));
-			}
-			if (same) { //password correspond
-				req.session.user = ret.rows[0];
-				res.send(response(1, {
-					user: ret.rows[0].login,
-					id_user: ret.rows[0].id_user
-				}));
-			} else {
+		})); // fin send
+	} else { // pas logged
+		var map = req.body.map;
+		db.selectUser(map.login, function(err, ret) {
+			if (ret.rowCount === 0) { //l'utilisateur n'est pas trouvé
 				res.send(response(4, null));
-			}
-		});
-	});
+				return;
+			} //fin row count 0
+			pw.compare(map.password, ret.rows[0].passwd, function(err, same) {
+				if (err) {
+					res.send(response(2, null));
+					return;
+				} else if (same) { //password correspond
+					req.session.user = {};
+					req.session.user.login = ret.rows[0]['login'];
+					req.session.user.id_user = ret.rows[0]['id_user'];
+					console.log(req.session.user);
+					var token = jwt.sign(req.session.user);
+					res.send(response(1, {
+						user: ret.rows[0].login,
+						id_user: ret.rows[0].id_user,
+						cookieAuth: req.body.map.cookieAuth ? token : null //Si rester connecté demandé jwt envoyé
+					}));
+				} else { //fin same
+					res.send(response(4, null));
+				}
+			}); //fin comare pw
+		}); //fin db select user
+	} //fin else pas logged
 	return;
 }
 
 //permet de charger une page demandée
 function loadPage(req, res) {
-	if ((req.body.page !== 'home' &&
+	if ((!isLogged(req)) && (req.body.page !== 'home' &&
 			req.body.page !== 'about' &&
-			req.body.page !== 'notLoggedIn') && (!isLogged(req))) { //request of a logged in page as a visitor
+			req.body.page !== 'notLoggedIn')) { //request of a logged in page as a visitor
 		res.send(response(3, null));
-		return;
+	} else {
+		res.sendFile('www/views/' + req.body.page + '.html', {
+			root: __dirname
+		});
 	}
-	res.sendFile('www/views/' + req.body.page + '.html', {
-		root: __dirname
-	});
 	return;
 }
 
-//vérifie s'il existe une session grâce a la requete client
+//vérifie s'il existe une session grâce a la requete client et à un jwt token
 function isLogged(req) {
 	if (req.session.user) {
 		return true;
 	} else {
-		return false;
+		if (req.body.cookieAuth) {
+			var decoded = jwt.verify(req.body.cookieAuth);
+			req.session.user = {};
+			req.session.user.login = decoded['login'];
+			req.session.user.id_user = decoded['id_user'];
+			console.log(req.session.user);
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

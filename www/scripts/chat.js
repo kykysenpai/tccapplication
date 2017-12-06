@@ -1,17 +1,54 @@
+var isTyping = false;
+
 $(function() {
 
 
 	$('#chatForm').submit(function() {
-		socket.emit('chatMessage', $('#chatText').val());
+		var dateNow = new Date();
+		dateNow = {
+			hour: dateNow.getHours(),
+			minute: dateNow.getMinutes(),
+			second: dateNow.getSeconds()
+		};
+		socket.emit('chatMessage', {
+			date: dateNow,
+			msg: $('#chatText').val()
+		});
+		socket.emit('stoppedTyping');
+		isTyping = false;
+		$('#chatMessages').append('<li class="list-group-item">[' +
+			dateNow.hour + ':' +
+			dateNow.minute + ':' +
+			dateNow.second + '] Vous: ' + $('#chatText').val() + '</li>');
 		$('#chatText').val(''); // vide l'input
+		$('#scrollableChat').scrollTop($('#scrollableChat')[0].scrollHeight); //redescend le chat
 		return false; //désactive le rechargement de la page au submit
+	});
+
+	$('#chatText').on('keypress', function() {
+		if (!isTyping) {
+			socket.emit('isTyping');
+			isTyping = true;
+		}
+	});
+	socket.on('isTyping', function(data) {
+		$('#isTyping').append('<li class="list-group-item" name="' + data.id_user + '">' +
+			data.user + ' is Typing</li>');
+	});
+	socket.on('stoppedTyping', function(data) {
+		$('#isTyping li[name=' + data.id_user + ']').remove();
 	});
 
 	var connected_users;
 
 	socket.on('chatMessage', function(msg) {
-		$('#chatMessages').append('<li class="list-group-item">[' + msg.date + '] ' + msg.user + ': ' + msg.msg + '</li>');
+		$('#chatMessages').append('<li class="list-group-item">[' +
+			msg.date.hour + ':' +
+			msg.date.minute + ':' +
+			msg.date.second + '] ' + msg.user + ': ' + msg.msg + '</li>');
+		$('#scrollableChat').scrollTop($('#scrollableChat')[0].scrollHeight); //descend le chat
 	});
+
 	socket.on('current_users', function(data) {
 		connected_users = data
 		for (var id_user in connected_users) {
@@ -21,19 +58,20 @@ $(function() {
 			});
 		}
 	});
+
 	socket.on('connected_user', function(id_user) {
 		$('#chatUsers').find('a').each(function() {
 			if ($(this).attr('name') == id_user)
 				$(this).addClass('active');
 		});
 	});
+
 	socket.on('disconnected_user', function(id_user) {
 		$('#chatUsers').find('a').each(function() {
 			if ($(this).attr('name') == id_user)
 				$(this).removeClass('active');
 		});
 	});
-
 
 	$.ajax({
 		url: '/post',
@@ -62,5 +100,4 @@ $(function() {
 			gererOutput(2, 'loading chat users');
 		}
 	});
-
 });

@@ -34,10 +34,8 @@ function chargerSession(user, id_user) {
 	});
 }
 
-//on ready
-var current_user_id = null;
 
-$(function() {
+$(function() { //on ready
 
 	toastr.options = {
 		"closeButton": false,
@@ -69,24 +67,10 @@ $(function() {
 	});
 
 	loadPage('home', 'contentContainer');
-	$.ajax({
-		url: '/post',
-		type: 'POST',
-		data: {
-			action: 'isLogged'
-		},
-		success: function(ret) {
-			var ret = JSON.parse(ret);
-			if (ret.num === 1) {
-				chargerSession(ret.map.user, ret.map.id_user);
-				current_user_id = ret.map.id_user;
-			} else {
-				afficherNotLogged();
-			}
-		},
-		error: function(ret) {
-			gererOutput(2, "Status");
-		}
+	isLogged(function(data) {
+		sessionStorage.setItem('current_user_id', data.map.id_user);
+		sessionStorage.setItem('current_user', data.map.user);
+		chargerSession(data.map.user, data.map.id_user);
 	});
 
 });

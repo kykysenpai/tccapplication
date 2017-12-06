@@ -10,6 +10,11 @@ function formMainSignIn(map) {
 			var ret = JSON.parse(ret);
 			gererOutput(ret.num, 'login');
 			if (ret.num === 1) {
+				sessionStorage.setItem('current_user_id', ret.map.id_user);
+				sessionStorage.setItem('current_user', ret.map.user);
+				if (ret.map.cookieAuth) {
+					localStorage.setItem('cookieAuth', ret.map.cookieAuth);
+				}
 				chargerSession(ret.map.user, ret.map.id_user);
 			}
 		},
@@ -30,6 +35,7 @@ function formMainSignOut() {
 		success: function(ret) {
 			var ret = JSON.parse(ret);
 			gererOutput(ret.num, 'logout');
+			localStorage.removeItem('cookieAuth');
 			afficherNotLogged();
 		},
 		error: function(ret) {
@@ -39,16 +45,12 @@ function formMainSignOut() {
 }
 
 $(function() {
-	$('.formButton').click(function() {
-		var formName = $(this).closest('form').attr('name');
-		var map = formToJson(formName);
-		switch (formName) {
-			case 'formMainSignIn':
-				formMainSignIn(map);
-				break;
-			case 'formMainSignOut':
-				formMainSignOut();
-				break;
-		}
+	$('form[name=formMainSignIn]').submit(function() {
+		var map = formToJson('formMainSignIn');
+		formMainSignIn(map);
+		return false;
+	});
+	$('form[name=formMainSignOut] > button').click(function() {
+		formMainSignOut();
 	});
 });
