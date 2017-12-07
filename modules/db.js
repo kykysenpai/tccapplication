@@ -1,8 +1,6 @@
-const {
-	Client
-} = require('pg');
+const mysql = require('mysql');
 
-const client = new Client({
+const client = mysql.createConnection({
 	user: 'root',
 	host: 'localhost',
 	database: 'tccApp',
@@ -11,14 +9,14 @@ const client = new Client({
 });
 client.connect();
 
-const table_users = "tccapp.users";
-const table_posts = "tccapp.posts";
+const table_users = "users";
+const table_posts = "posts";
 
 const select_all_user = "SELECT u.id_user, u.login FROM " + table_users + " u";
-const select_user = "SELECT * FROM " + table_users + " u WHERE u.login = ($1)";
-const select_user_id = "SELECT * FROM " + table_users + " u WHERE u.id_user = ($1)";
-const insert_post = "INSERT INTO " + table_posts + " VALUES (DEFAULT, ($1), ($2), ($3)) RETURNING *";
-const update_user = "UPDATE " + table_users + " SET firstname = ($1), surname = ($2), login = ($3), passwd = ($4), email = ($5) WHERE id_user = ($6)";
+const select_user = "SELECT * FROM " + table_users + " u WHERE u.login = ?";
+const select_user_id = "SELECT * FROM " + table_users + " u WHERE u.id_user = ?";
+const insert_post = "INSERT INTO " + table_posts + " VALUES (DEFAULT, ?, ?, ?) RETURNING *";
+const update_user = "UPDATE " + table_users + " SET firstname = ?, surname = ?, login = ?, passwd = ?, email = ? WHERE id_user = ?";
 
 exports.updateUser = function(data, callback) {
 	client.query(update_user, [data.firstname, data.surname, data.login, data.password, data.email, data.id_user], (err, res) => {
