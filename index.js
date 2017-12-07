@@ -305,19 +305,19 @@ function login(req, res) {
 				return;
 			} //fin row count 0
 			console.log(ret);
-			pw.compare(map.password, ret.rows[0].passwd, function(err, same) {
+			pw.compare(map.password, ret.RowDataPacket.passwd, function(err, same) {
 				if (err) {
 					res.send(response(2, null));
 					return;
 				} else if (same) { //password correspond
 					req.session.user = {};
-					req.session.user.login = ret.rows[0]['login'];
-					req.session.user.id_user = ret.rows[0]['id_user'];
+					req.session.user.login = ret.RowDataPacket['login'];
+					req.session.user.id_user = ret.RowDataPacket['id_user'];
 					console.log(req.session.user);
 					var token = jwt.sign(req.session.user);
 					res.send(response(1, {
-						user: ret.rows[0].login,
-						id_user: ret.rows[0].id_user,
+						user: ret.RowDataPacket.login,
+						id_user: ret.RowDataPacket.id_user,
 						cookieAuth: req.body.map.cookieAuth ? token : null //Si rester connecté demandé jwt envoyé
 					}));
 				} else { //fin same
