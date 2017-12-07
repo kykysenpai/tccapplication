@@ -304,6 +304,7 @@ function login(req, res) {
 				res.send(response(4, null));
 				return;
 			} //fin row count 0
+			console.log(ret);
 			pw.compare(map.password, ret.rows[0].passwd, function(err, same) {
 				if (err) {
 					res.send(response(2, null));
