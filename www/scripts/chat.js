@@ -81,6 +81,7 @@ $(function() {
 		},
 		success: function(ret) {
 			var ret = JSON.parse(ret);
+			console.log(ret);
 			gererOutput(ret.num, 'loading chat users');
 			for (var user in ret.map) {
 				$('#chatUsers').append('<a class="list-group-item" name="' + ret.map[user].id_user + '">' + ret.map[user].login + '</a>');
