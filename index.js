@@ -258,7 +258,7 @@ function loadChatUsers(req, res) {
 		if (err) {
 			res.send(response(2, null));
 		} else {
-			res.send(response(1, ret[0]));
+			res.send(response(1, ret));
 		}
 	});
 	return;
