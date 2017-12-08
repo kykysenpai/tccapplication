@@ -258,7 +258,7 @@ function loadChatUsers(req, res) {
 		if (err) {
 			res.send(response(2, null));
 		} else {
-			res.send(response(1, ret.rows));
+			res.send(response(1, ret[0]));
 		}
 	});
 	return;
@@ -271,16 +271,16 @@ function loadChatUser(req, res) {
 			res.send(response(2, null));
 		} else {
 			if (ret.rowCount === 1) {
-				for (let tuple in ret.rows[0]) {
-					if (!ret.rows[0][tuple]) {
-						ret.rows[0][tuple] = 'Pas donné par l\'utilisateur';
+				for (let tuple in ret[0]) {
+					if (!ret[0][tuple]) {
+						ret[0][tuple] = 'Pas donné par l\'utilisateur';
 					}
 				}
 				res.send(response(1, {
-					login: ret.rows[0].login,
-					surname: ret.rows[0].surname,
-					firstname: ret.rows[0].firstname,
-					email: ret.rows[0].email
+					login: ret[0].login,
+					surname: ret[0].surname,
+					firstname: ret[0].firstname,
+					email: ret[0].email
 				}));
 			} else {
 				res.send(response(5, null));
