@@ -165,13 +165,13 @@ app.post('/signOut', (req, res) => {
 	});
 });
 
-app.get('/loadPage/:page', (req, res) => {
-	if ((!isLogged(req)) && (req.params.page !== 'home' &&
-			req.params.page !== 'about' &&
-			req.params.page !== 'notLoggedIn')) { //request of a logged in page as a visitor
+app.get('/loadPage', (req, res) => {
+	if ((!isLogged(req)) && (req.query.page !== 'home' &&
+			req.query.page !== 'about' &&
+			req.query.page !== 'notLoggedIn')) { //request of a logged in page as a visitor
 		res.send(response(3, null));
 	} else {
-		res.sendFile('www/views/' + req.params.page + '.html', {
+		res.sendFile('www/views/' + req.query.page + '.html', {
 			root: __dirname
 		});
 	}
@@ -187,8 +187,8 @@ app.post('/chatUsers', (req, res) => {
 	});
 });
 
-app.get('/user/:id', (req, res) => {
-	db.selectUserId(req.params.id, function(err, ret) {
+app.get('/user', (req, res) => {
+	db.selectUserId(req.query.id, function(err, ret) {
 		if (err) {
 			res.send(response(2, null));
 		} else {
