@@ -1,9 +1,8 @@
 function formMainSignIn(map) {
 	$.ajax({
-		url: '/post',
+		url: '/signIn',
 		type: 'POST',
 		data: {
-			action: 'formMainSignIn',
 			map: map
 		},
 		success: function(ret) {
@@ -27,11 +26,8 @@ function formMainSignIn(map) {
 function formMainSignOut() {
 	socket.disconnect();
 	$.ajax({
-		url: '/post',
+		url: '/signOut',
 		type: 'POST',
-		data: {
-			action: 'formMainSignOut'
-		},
 		success: function(ret) {
 			var ret = JSON.parse(ret);
 			gererOutput(ret.num, 'logout');

@@ -1,8 +1,3 @@
-const opbeat = require('opbeat').start({
-	appId: 'e7f9b84da2',
-	organizationId: '3b323ca34077436a8e5d636c7ec38413',
-	secretToken: 'ef58eecb811d5a477ec869bf4fe11f2718037355'
-}); //app externe de debugging
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -12,15 +7,11 @@ const db = require('./modules/db.js');
 const pw = require('./modules/pw.js');
 const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
-const pictio = require('./modules/pictio.js');
-const boxheadModule = require('./modules/boxhead.js');
 const jwt = require('./modules/jwt.js');
-const serveIndex = require('serve-index');
 
 //setup application
 app.set('port', (process.env.PORT || 5001));
 app.use(express.static(__dirname + '/www')); //dossier public
-app.use('/assets', serveIndex(__dirname + '/www/assets')); //sert le dossier assets en dossier browsable
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
@@ -33,7 +24,6 @@ app.use(session({ //setup cookie session
 		maxAge: 36000000 //age
 	}
 }));
-app.use(opbeat.middleware.express()); //setup debug externe
 
 //get root
 app.get('/', (req, res) => {
@@ -49,8 +39,6 @@ app.get('/', (req, res) => {
 });
 
 var connected_users = {}; //les utilisateurs connectés maintenant
-var boxhead = new boxheadModule.Game();
-
 
 //connexion socket et gestion des IO des sockets
 io.on('connection', function(socket) { //connexion d'un socket
@@ -119,45 +107,137 @@ io.on('connection', function(socket) { //connexion d'un socket
 		socket.broadcast.emit('stoppedTyping', user);
 	});
 
-	socket.on('lancerJeu1', function() {
-		pictio.start(socket, io); //pictio
-	});
-
-	//listeners game box head
-	socket.on('bhJoinGame', function(player) { //un nouveau jouer rejoins la partie
-		var initX = 400;
-		var initY = 400;
-		var init_hp = 100;
-		socket.emit('bhJoinGame', { //réponse au socket connectant
-			id: player.id,
-			name: player.name,
-			isLocal: true,
-			x: initX,
-			y: initY,
-			hp: init_hp
-		});
-		socket.broadcast.emit('bhJoinGame', { //envoie de la connexion aux autres utilisateurs
-			id: player.id,
-			name: player.name,
-			isLocal: false,
-			x: initX,
-			y: initY,
-			hp: init_hp
-		});
-		boxhead.addPlayer({
-			id: player.id,
-			name: player.name,
-			hp: init_hp
-		});
-
-	});
-
-	socket.on('bhLeaveGame', function(player) { //un joueur quitte la partie
-		boxhead.removePlayer(player);
-	});
-
 });
 
+app.post('/signIn', (req, res) => {
+	if (isLogged(req)) { //logged in session ou jwt
+		res.send(response(1, {
+			user: req.session.user.login,
+			id_user: req.session.user.id_user
+		})); // fin send
+	} else { // pas logged
+		var map = req.body.map;
+		db.selectUser(map.login, function(err, ret) {
+			if (ret.rowCount === 0) { //l'utilisateur n'est pas trouvé
+				res.send(response(4, null));
+				return;
+			} //fin row count 0
+			pw.compare(map.password, ret[0].passwd, function(err, same) {
+				if (err) {
+					res.send(response(2, null));
+					return;
+				} else if (same) { //password correspond
+					req.session.user = {};
+					req.session.user.login = ret[0]['login'];
+					req.session.user.id_user = ret[0]['id_user'];
+					var token = jwt.sign(req.session.user);
+					res.send(response(1, {
+						user: ret[0].login,
+						id_user: ret[0].id_user,
+						cookieAuth: req.body.map.cookieAuth ? token : null //Si rester connecté demandé jwt envoyé
+					}));
+				} else { //fin same
+					res.send(response(4, null));
+				}
+			}); //fin comare pw
+		}); //fin db select user
+	} //fin else pas logged
+});
+
+app.post('/isLogged', (req, res) => {
+	if (isLogged(req)) {
+		res.send(response(1, {
+			user: req.session.user.login,
+			id_user: req.session.user.id_user
+		}));
+	} else {
+		res.send(response(0, null));
+	}
+});
+
+app.post('/signOut', (req, res) => {
+	req.session.destroy(function(err) {
+		if (err) {
+			res.send(response(0, null));
+		} else {
+			res.send(response(1, null));
+		}
+	});
+});
+
+app.post('/loadPage', (req, res) => {
+	if ((!isLogged(req)) && (req.body.page !== 'home' &&
+			req.body.page !== 'about' &&
+			req.body.page !== 'notLoggedIn')) { //request of a logged in page as a visitor
+		res.send(response(3, null));
+	} else {
+		res.sendFile('www/views/' + req.body.page + '.html', {
+			root: __dirname
+		});
+	}
+});
+
+app.post('/chatUsers', (req, res) => {
+	db.selectAllUser(function(err, ret) {
+		if (err) {
+			res.send(response(2, null));
+		} else {
+			res.send(response(1, ret));
+		}
+	});
+});
+
+app.get('/user/:id', (req, res) => {
+	db.selectUserId(req.params.id, function(err, ret) {
+		if (err) {
+			res.send(response(2, null));
+		} else {
+			if (ret.rowCount === 1) {
+				for (let tuple in ret[0]) {
+					if (!ret[0][tuple]) {
+						ret[0][tuple] = 'Pas donné par l\'utilisateur';
+					}
+				}
+				res.send(response(1, {
+					login: ret[0].login,
+					surname: ret[0].surname,
+					firstname: ret[0].firstname,
+					email: ret[0].email
+				}));
+			} else {
+				res.send(response(5, null));
+			}
+		}
+		return;
+	});
+});
+
+app.post('/modifProfil', (req, res) => {
+	if (req.body.password !== req.body.confirmPassword) { //le pwd de confirmation ne coincide pas
+		res.send(response(6, null));
+		return;
+	}
+	for (var data in req.body) { //enleve les string encombrants pour la db, met null a la place
+		if ((req.body[data] === 'Pas donné par l\'utilisateur') || req.body.data[data] === '') {
+			req.body[data] = null;
+		}
+	}
+	req.body.id_user = req.session.user.id_user;
+	pw.crypt(req.body.password, function(err, hash) {
+		if (err) {
+			res.send(response(2, null));
+		} else {
+			req.body.password = hash;
+			db.updateUser(req.body, function(err, ret) {
+				res.send(response(1, null));
+			});
+		}
+		return;
+	});
+});
+
+
+/*
 //servlet post switch case action
 app.post('/post', (req, res) => {
 	var action = req.body.action;
@@ -214,18 +294,6 @@ app.post('/post', (req, res) => {
 
 });
 
-
-server.listen(app.get('port'), function() {
-	console.log('Server is listening on port', app.get('port'));
-});
-
-//format des réponses pour le front end
-var response = function(num, map) {
-	var self = {};
-	self.num = num;
-	self.map = map;
-	return JSON.stringify(self);
-}
 
 //modifie le profil en db
 function modifProfil(req, res) {
@@ -342,7 +410,7 @@ function loadPage(req, res) {
 	}
 	return;
 }
-
+*/
 //vérifie s'il existe une session grâce a la requete client et à un jwt token
 function isLogged(req) {
 	if (req.session.user) {
@@ -359,4 +427,17 @@ function isLogged(req) {
 			return false;
 		}
 	}
+}
+
+
+server.listen(app.get('port'), function() {
+	console.log('Server is listening on port', app.get('port'));
+});
+
+//format des réponses pour le front end
+var response = function(num, map) {
+	var self = {};
+	self.num = num;
+	self.map = map;
+	return JSON.stringify(self);
 }

@@ -26,8 +26,6 @@
     "express-session": "^1.15.6",
     "jsonwebtoken": "^8.0.1",
     "mysql": "^2.15.0",
-    "opbeat": "^4.16.0",
-    "serve-index": "^1.9.1",
     "socket.io": "^2.0.3"
   }
 }

@@ -1,11 +1,8 @@
 function loadChatProfile(id_user) {
 	$.ajax({
-		url: '/post',
-		type: 'POST',
-		data: {
-			action: 'loadChatUser',
-			id_user: id_user
-		},
+		url: '/user',
+		type: 'GET',
+		data: 'id=' + id_user,
 		success: function(ret) {
 			var ret = JSON.parse(ret);
 			gererOutput(ret.num, 'loading profile info');
@@ -28,12 +25,9 @@ function loadChatProfile(id_user) {
 			$('#pageProfile button[name=confirmer]').click(function() {
 				var map = formToJson($(this).closest('form').attr('name'));
 				$.ajax({
-					url: '/post',
+					url: '/modifProfil',
 					type: 'POST',
-					data: {
-						action: 'modifProfil',
-						data: map
-					},
+					data: map,
 					success: function(ret) {
 						var ret = JSON.parse(ret);
 						gererOutput(ret.num, 'Profile modification');

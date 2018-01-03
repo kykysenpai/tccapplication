@@ -39,7 +39,7 @@ function afficherNotLogged() {
 function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
-
+/*
 function keyboard(keyCode) {
 	var key = {};
 	key.code = keyCode;
@@ -75,7 +75,7 @@ function keyboard(keyCode) {
 		"keyup", key.upHandler.bind(key), false
 	);
 	return key;
-}
+}*/
 
 //renvoie un object js avec les valeurs du form
 function formToJson(name) {

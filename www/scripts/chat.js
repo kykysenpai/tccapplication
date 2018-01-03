@@ -1,8 +1,6 @@
 var isTyping = false;
 
 $(function() {
-
-
 	$('#chatForm').submit(function() {
 		var dateNow = new Date();
 		dateNow = {
@@ -74,11 +72,8 @@ $(function() {
 	});
 
 	$.ajax({
-		url: '/post',
+		url: '/chatUsers',
 		type: 'POST',
-		data: {
-			action: 'loadChatUsers'
-		},
 		success: function(ret) {
 			var ret = JSON.parse(ret);
 			console.log(ret);

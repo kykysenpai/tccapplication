@@ -1,11 +1,8 @@
 function loadChatUser(id_user) {
 	$.ajax({
-		url: '/post',
-		type: 'POST',
-		data: {
-			action: 'loadChatUser',
-			id_user: id_user
-		},
+		url: '/user',
+		type: 'GET',
+		data: 'id=' + id_user,
 		success: function(ret) {
 			var ret = JSON.parse(ret);
 			gererOutput(ret.num, 'loading user info');

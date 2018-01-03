@@ -1,9 +1,8 @@
 function isLogged(callback) {
 	$.ajax({
-		url: '/post',
+		url: '/isLogged',
 		type: 'POST',
 		data: {
-			action: 'isLogged',
 			cookieAuth: localStorage.getItem('cookieAuth') ? localStorage.getItem('cookieAuth') : null //si on a un cookie on l'envoie
 		},
 		success: function(ret) {
