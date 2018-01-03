@@ -20,7 +20,7 @@ function chargerSession(user, id_user) {
 	//charger Infos
 	$.ajax({
 		url: '/loadSession',
-		type: 'POST'
+		type: 'POST',
 		success: function(ret) {
 			var ret = JSON.parse(ret);
 			gererOutput(ret.num, "Chargement Session");
