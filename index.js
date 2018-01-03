@@ -165,13 +165,13 @@ app.post('/signOut', (req, res) => {
 	});
 });
 
-app.post('/loadPage', (req, res) => {
-	if ((!isLogged(req)) && (req.body.page !== 'home' &&
-			req.body.page !== 'about' &&
-			req.body.page !== 'notLoggedIn')) { //request of a logged in page as a visitor
+app.get('/loadPage/:page', (req, res) => {
+	if ((!isLogged(req)) && (req.params.page !== 'home' &&
+			req.params.page !== 'about' &&
+			req.params.page !== 'notLoggedIn')) { //request of a logged in page as a visitor
 		res.send(response(3, null));
 	} else {
-		res.sendFile('www/views/' + req.body.page + '.html', {
+		res.sendFile('www/views/' + req.params.page + '.html', {
 			root: __dirname
 		});
 	}
@@ -234,6 +234,10 @@ app.post('/modifProfil', (req, res) => {
 		}
 		return;
 	});
+});
+
+app.post('/loadSession', (req, res) => {
+	res.send(response(1, null));
 });
 
 

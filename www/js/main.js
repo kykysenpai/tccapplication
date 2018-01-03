@@ -19,11 +19,8 @@ function chargerSession(user, id_user) {
 
 	//charger Infos
 	$.ajax({
-		url: '/post',
-		type: 'POST',
-		data: {
-			action: 'chargerSession'
-		},
+		url: '/loadSession',
+		type: 'POST'
 		success: function(ret) {
 			var ret = JSON.parse(ret);
 			gererOutput(ret.num, "Chargement Session");

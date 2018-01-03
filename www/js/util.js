@@ -5,12 +5,9 @@ var socket;
 
 function loadPage(name, where, callback) { //callback optionel
 	$.ajax({
-		url: '/post',
-		type: 'POST',
-		data: {
-			action: 'loadPage',
-			page: name
-		},
+		url: '/loadPage',
+		type: 'GET',
+		data: 'page=' + name,
 		success: function(ret) {
 			try {
 				var ret = JSON.parse(ret);
