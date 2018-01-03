@@ -199,10 +199,10 @@ app.get('/user', (req, res) => {
 					}
 				}
 				res.send(response(1, {
-					login: ret[0].login,
-					surname: ret[0].surname,
-					firstname: ret[0].firstname,
-					email: ret[0].email
+					login: ret[0]['login'],
+					surname: ret[0]['surname'],
+					firstname: ret[0]['firstname'],
+					email: ret[0]['email']
 				}));
 			} else {
 				res.send(response(5, null));
