@@ -2,10 +2,9 @@ const mysql = require('mysql');
 
 const client = mysql.createConnection({
 	user: 'root',
-	host: 'localhost',
+	socketPath: '/var/run/mysqld/mysqld.sock',
 	database: 'tccApp',
-	password: 'Shakti1405',
-	port: 3306
+	password: 'Shakti1405'
 });
 client.connect();
 
