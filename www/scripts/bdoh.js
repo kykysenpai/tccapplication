@@ -15,12 +15,10 @@ $(function() {
 function startTimer(interval, id) {
 	var x = setInterval(function() {
 		interval -= 1000;
-		var localRow = $('#tableTimerMarketplaceRow_' + id);
 		$('#tableTimerMarketplaceRow_' + id + ' > td[name="nombreMinutes"]').val(interval / 1000);
 		if (interval <= 0) {
 			//son
-			console.log(localRow);
-			localRow.remove();
+			console.log($('#tableTimerMarketplace tr[id="tableTimerMarketplaceRow_' + id + '"]'));
 			clearInterval(x);
 		}
 	}, 1000);
