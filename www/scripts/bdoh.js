@@ -12,7 +12,7 @@ $(function() {
 	});
 
 	$('.tableTimerMarketPlaceButtonRemove').click(function() {
-		$(this).closest('tr').remove();
+		$(this).parent().parent().remove();
 	});
 
 });
