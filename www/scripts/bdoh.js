@@ -18,7 +18,9 @@ function startTimer(interval, id) {
 		$('#tableTimerMarketplaceRow_' + id + ' > td[name="nombreMinutes"]').val(interval / 1000);
 		if (interval <= 0) {
 			//son
-			console.log($('#tableTimerMarketplace tr[id="tableTimerMarketplaceRow_' + id + '"]'));
+			$('#tableTimerMarketplace tr[id="tableTimerMarketplaceRow_' + id + '"]').each(function() {
+				$(this).remove();
+			});
 			clearInterval(x);
 		}
 	}, 1000);
