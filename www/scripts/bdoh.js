@@ -20,7 +20,7 @@ $(function() {
 function startTimer(interval, id) {
 	var x = setInterval(function() {
 		interval -= 1000;
-		$('#tableTimerMarketplaceRow_' + id + ' td[name="nombreMinutes"]').text(interval / 1000);
+		$('#tableTimerMarketplaceRow_' + id).text(interval / 1000);
 		if (interval <= 0) {
 
 			clearInterval(x);
