@@ -2,7 +2,7 @@ var currentID = 0;
 
 $(function() {
 	$('#tableTimerMarketplaceButton').click(function() {
-		var row = '<tr name=tableTimerMarketplaceRow_"' + (++currentID) + '">';
+		var row = '<tr name=tableTimerMarketplaceRow_' + (++currentID) + '>';
 		row += '<td name="nomItem">' + $('#tableTimerMarketplaceNomItem').val() + "</td>";
 		row += '<td name="nombreMinutes">' + $('#tableTimerMarketplaceNombreMinutes').val() + "</td>";
 		row += '<td><button class="tableTimerMarketPlaceButtonRemove" type="button">Supprimer</button></td>';
