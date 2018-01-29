@@ -5,6 +5,7 @@ $(function() {
 		row += "<td>" + $('#tableTimerMarketplace > input[name="nombreMinutes"]').val() + "</td>";
 		row += "<td>" + "</td>";
 		row += "</tr>";
+		console.log(row);
 		$('#tableTimerMarketplace > tr:first').after(row);
 	})
 });
