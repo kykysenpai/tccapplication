@@ -1,10 +1,8 @@
 var currentID = 0;
-
+var audio = new Audio('audio/Cha_Ching.mp3');
 var notification;
 
 $(function() {
-	Notification.requestPermission(function(status) {});
-
 	$('#tableTimerMarketplaceButton').click(function() {
 		var row = '<tr name=tableTimerMarketplaceRow_' + (++currentID) + '>';
 		row += '<td name="nomItem">' + $('#tableTimerMarketplaceNomItem').val() + "</td>";
@@ -26,9 +24,7 @@ function startTimerMarketPlace(interval, id) {
 		var min = Math.floor((interval / 1000) / 60);
 		$('#tableTimerMarketplace tr[name="tableTimerMarketplaceRow_' + id + '"] td[name="nombreMinutes"]').text(min + ':' + sec);
 		if (interval <= 0) {
-			var notification = new Notification('Marketplace Item', {
-				body: $('#tableTimerMarketplace tr[name="tableTimerMarketplaceRow_' + id + '"] td[name="nomItem"]')
-			});
+			audio.play();
 			clearInterval(x);
 		}
 	}, 1000);
