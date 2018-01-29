@@ -9,6 +9,9 @@ $(function() {
 		row += "</tr>";
 		$('#tableTimerMarketplace > tr:first').after(row);
 		startTimerMarketPlace($('#tableTimerMarketplaceNombreMinutes').val() * 1000, currentID);
+		$('#tableTimerMarketplaceRow_' + currentID + ' button').click(function() {
+			$(this).closest('tr').remove();
+		})
 	});
 
 	$('.tableTimerMarketPlaceButtonRemove').click(function() {
