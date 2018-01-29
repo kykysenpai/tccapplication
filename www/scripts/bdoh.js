@@ -2,25 +2,25 @@ var currentID = 0;
 
 $(function() {
 	$('#tableTimerMarketplaceButton').click(function() {
-		var row = '<tr id=tableTimerMarketplaceRow_"' + ++currentID + '">';
+		var row = '<tr name=tableTimerMarketplaceRow_"' + (++currentID) + '">';
 		row += '<td name="nomItem">' + $('#tableTimerMarketplaceNomItem').val() + "</td>";
 		row += '<td name="nombreMinutes">' + $('#tableTimerMarketplaceNombreMinutes').val() + "</td>";
 		row += '<td><button class="tableTimerMarketPlaceButtonRemove" type="button">Supprimer</button></td>';
 		row += "</tr>";
 		$('#tableTimerMarketplace > tr:first').after(row);
-		startTimer($('#tableTimerMarketplaceNombreMinutes').val() * 1000, currentID);
-	})
+		startTimerMarketPlace($('#tableTimerMarketplaceNombreMinutes').val() * 1000, currentID);
+	});
 
 	$('.tableTimerMarketPlaceButtonRemove').click(function() {
-		$(this).parent().remove();
-	})
+		$(this).closest('tr').remove();
+	});
 
 });
 
-function startTimer(interval, id) {
+function startTimerMarketPlace(interval, id) {
 	var x = setInterval(function() {
 		interval -= 1000;
-		$('#tableTimerMarketplaceRow_' + id).text(interval / 1000);
+		$('#tableTimerMarketplace tr[name="tableTimerMarketplaceRow_' + id + '"]').text(interval / 1000);
 		if (interval <= 0) {
 
 			clearInterval(x);
