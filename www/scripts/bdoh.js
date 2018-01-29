@@ -1,5 +1,12 @@
 $(function() {
-	startTimer(5000);
+	$('#tableTimerMarketplaceButton').click(function() {
+		var row = "<tr>";
+		row += "<td>" + $('#tableTimerMarketplace > input[name="nomItem"]').val() + "</td>";
+		row += "<td>" + $('#tableTimerMarketplace > input[name="nombreMinutes"]').val() + "</td>";
+		row += "<td>" + "</td>";
+		row += "</tr>";
+		$('#tableTimerMarketplace > tr:first').after(row);
+	})
 });
 
 function startTimer(interval) {
