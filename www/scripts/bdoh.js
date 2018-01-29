@@ -8,17 +8,18 @@ $(function() {
 		row += "<td>" + "</td>";
 		row += "</tr>";
 		$('#tableTimerMarketplace > tr:first').after(row);
-		startTimer($('#tableTimerMarketplaceNombreMinutes').val() * 60 * 1000);
+		startTimer($('#tableTimerMarketplaceNombreMinutes').val() * 1000, currentID);
 	})
 });
 
-function startTimer(interval) {
+function startTimer(interval, id) {
 	var x = setInterval(function() {
 		interval -= 1000;
-		localID = currentID;
 		if (interval <= 0) {
 			//son
-			$('#tableTimerMarketplaceRow_' + localID).remove();
+			console.log($('#tableTimerMarketplaceRow_' + id));
+			console.log('delete');
+			$('#tableTimerMarketplaceRow_' + id).remove();
 			clearInterval(x);
 		}
 	}, 1000);
