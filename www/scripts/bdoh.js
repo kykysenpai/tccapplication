@@ -19,6 +19,7 @@ function startTimer(interval, id) {
 		$('#tableTimerMarketplaceRow_' + id + ' > td[name="nombreMinutes"]').val(interval / 1000);
 		if (interval <= 0) {
 			//son
+			console.Log(localRow);
 			localRow.remove();
 			clearInterval(x);
 		}
