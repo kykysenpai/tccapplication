@@ -7,18 +7,12 @@ $(function() {
 		row += '<td name="nombreMinutes">' + $('#tableTimerMarketplaceNombreMinutes').val() + "</td>";
 		row += '<td><button class="tableTimerMarketPlaceButtonRemove" type="button">Supprimer</button></td>';
 		row += "</tr>";
-		$('#tableTimerMarketplace > tr:first').after(row);
+		$('#tableTimerMarketplace > tr:first').append(row);
 		startTimerMarketPlace($('#tableTimerMarketplaceNombreMinutes').val() * 1000, currentID);
-		$('#tableTimerMarketplaceRow_' + currentID + ' button').click(function() {
-			console.log('clicked');
-			$(this).closest('tr').remove();
+		$('#tableTimerMarketplace > tr:last > td:last > button').click(function() {
+			console.log("hello");
 		})
 	});
-
-	$('.tableTimerMarketPlaceButtonRemove').click(function() {
-		$(this).parent().parent().remove();
-	});
-
 });
 
 function startTimerMarketPlace(interval, id) {
