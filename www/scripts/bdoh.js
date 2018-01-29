@@ -11,6 +11,7 @@ $(function() {
 		startTimerMarketPlace($('#tableTimerMarketplaceNombreMinutes').val() * 1000, currentID);
 		$('#tableTimerMarketplace > tr:last > td:last > button').click(function() {
 			console.log("hello");
+			$(this).closest('tr').remove();
 		})
 	});
 });
