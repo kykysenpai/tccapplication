@@ -18,8 +18,8 @@ $(function() {
 function startTimerMarketPlace(interval, id) {
 	var x = setInterval(function() {
 		interval -= 1000;
-		min = (interval / 1000) % 60;
-		sec = interval - (min * 60);
+		var sec = (interval / 1000) % 60;
+		var min = Math.floor((interval / 1000) / 60);
 		$('#tableTimerMarketplace tr[name="tableTimerMarketplaceRow_' + id + '"] td[name="nombreMinutes"]').text(min + ':' + sec);
 		if (interval <= 0) {
 
