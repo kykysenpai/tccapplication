@@ -7,7 +7,7 @@ $(function() {
 		row += '<td name="nombreMinutes">' + $('#tableTimerMarketplaceNombreMinutes').val() + "</td>";
 		row += '<td><button class="tableTimerMarketPlaceButtonRemove" type="button">Supprimer</button></td>';
 		row += "</tr>";
-		$('#tableTimerMarketplace > tr:first').append(row);
+		$('#tableTimerMarketplace').append(row);
 		startTimerMarketPlace($('#tableTimerMarketplaceNombreMinutes').val() * 1000, currentID);
 		$('#tableTimerMarketplace > tr:last > td:last > button').click(function() {
 			console.log("hello");
