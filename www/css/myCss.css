@@ -42,3 +42,7 @@ h1,h2,h3,h4,h5,h6{font-family: 'Lato', sans-serif;}
 @media only screen and (max-width:479px){
     #list-devs li{width: 99%;}
 }
+
+input[type="text"]{
+  color: black;
+}
